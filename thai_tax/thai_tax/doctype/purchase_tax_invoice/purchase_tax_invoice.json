@@ -1,0 +1,271 @@
+{
+ "actions": [],
+ "allow_guest_to_view": 1,
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2023-03-04 12:10:20.931148",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "number",
+  "date",
+  "months_delayed",
+  "report_date",
+  "column_break_6",
+  "account",
+  "tax_base",
+  "tax_amount",
+  "column_break_10",
+  "voucher_type",
+  "voucher_no",
+  "company_tax_address",
+  "supplier_section",
+  "party",
+  "party_name",
+  "column_break_9",
+  "tax_id",
+  "branch_code",
+  "reference_section",
+  "company",
+  "gl_entry",
+  "column_break_13",
+  "against_voucher_type",
+  "against_voucher",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "SI.YY.",
+   "reqd": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Number"
+  },
+  {
+   "allow_on_submit": 1,
+   "fetch_from": "gl_entry.posting_date",
+   "fetch_if_empty": 1,
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Date"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "months_delayed",
+   "fieldtype": "Select",
+   "label": "Delayed (months)",
+   "options": "0\n1\n2\n3\n4\n5\n6",
+   "reqd": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "report_date",
+   "fieldtype": "Date",
+   "label": "Report Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "gl_entry.account",
+   "fieldname": "account",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Account",
+   "options": "Account",
+   "search_index": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "tax_base",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Tax Base",
+   "options": "Company:company:default_currency"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "tax_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Tax Amount",
+   "options": "Company:company:default_currency"
+  },
+  {
+   "fieldname": "column_break_10",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "gl_entry.voucher_type",
+   "fieldname": "voucher_type",
+   "fieldtype": "Link",
+   "label": "Voucher Type",
+   "options": "DocType",
+   "search_index": 1
+  },
+  {
+   "fetch_from": "gl_entry.voucher_no",
+   "fieldname": "voucher_no",
+   "fieldtype": "Dynamic Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Voucher No",
+   "options": "voucher_type",
+   "search_index": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "company_tax_address",
+   "fieldtype": "Link",
+   "label": "Company Tax Address",
+   "options": "Address"
+  },
+  {
+   "fieldname": "supplier_section",
+   "fieldtype": "Section Break",
+   "label": "Supplier"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "party",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Party",
+   "options": "Supplier",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fetch_from": "party.supplier_name",
+   "fieldname": "party_name",
+   "fieldtype": "Data",
+   "label": "Party Name"
+  },
+  {
+   "fieldname": "column_break_9",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "tax_id",
+   "fieldtype": "Data",
+   "is_virtual": 1,
+   "label": "Tax ID",
+   "options": "frappe.get_doc('Supplier', doc.party).tax_id"
+  },
+  {
+   "fieldname": "branch_code",
+   "fieldtype": "Data",
+   "is_virtual": 1,
+   "label": "Branch Code",
+   "options": "frappe.get_doc('Supplier', doc.party).branch_code"
+  },
+  {
+   "fieldname": "reference_section",
+   "fieldtype": "Section Break",
+   "label": "Reference"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Company",
+   "options": "Company",
+   "print_hide": 1,
+   "remember_last_selected_value": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "gl_entry",
+   "fieldtype": "Link",
+   "label": "GL Entry",
+   "options": "GL Entry"
+  },
+  {
+   "fieldname": "column_break_13",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "against_voucher_type",
+   "fieldtype": "Link",
+   "label": "Against Voucher Type",
+   "options": "DocType"
+  },
+  {
+   "fieldname": "against_voucher",
+   "fieldtype": "Dynamic Link",
+   "label": "Against Voucher",
+   "options": "against_voucher_type"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Purchase Tax Invoice",
+   "print_hide": 1,
+   "read_only": 1
+  }
+ ],
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2023-03-04 12:14:49.270413",
+ "modified_by": "Administrator",
+ "module": "Thai Tax",
+ "name": "Purchase Tax Invoice",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "cancel": 1,
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "show_title_field_in_link": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "number",
+ "track_changes": 1
+}

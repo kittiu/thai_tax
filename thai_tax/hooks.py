@@ -7,6 +7,52 @@ app_description = "Thailand Taxation - VAT, WHT"
 app_email = "kittiu@gmail.com"
 app_license = "MIT"
 
+fixtures = [
+    {
+        "doctype": "Custom Field",
+        "filters": [
+            [
+                "name",
+                "in",
+                (
+                    "Payment Entry-column_break_yio5c",
+                    "Payment Entry-section_break_owjbn",
+                    "Supplier-branch_code",
+                    "Customer-branch_code",
+                    "Expense Claim-tax_invoice_date",
+                    "Expense Claim-supplier_name",
+                    "Expense Claim-column_break_6atpw",
+                    "Expense Claim-supplier",
+                    "Expense Claim-tax_invoice_number",
+                    "Expense Claim-section_break_uodhb",
+                    "Expense Claim-company_tax_address",
+                    "Expense Claim-tax_invoice",
+                    "Journal Entry-tax_invoice_date",
+                    "Journal Entry-column_break_1ds9m",
+                    "Journal Entry-tax_invoice_number",
+                    "Journal Entry-section_break_hjndu",
+                    "Journal Entry-company_tax_address",
+                    "Journal Entry-tax_invoice",
+                    "Payment Entry-tax_invoice_date",
+                    "Payment Entry-tax_invoice_number",
+                    "Payment Entry-company_tax_address",
+                    "Payment Entry-tax_invoice",
+                    "Payment Entry-deduct_withholding_tax",
+                    "Sales Invoice-tax_invoice_number",
+                    "Sales Invoice-column_break_cijbv",
+                    "Sales Invoice-tax_invoice_date",
+                    "Sales Invoice-tax_invoice",
+                    "Purchase Invoice-tax_invoice_date",
+                    "Purchase Invoice-column_break_t0qgt",
+                    "Purchase Invoice-tax_invoice_number",
+                    "Purchase Invoice-tax_invoice"
+                )
+            ]
+        ]
+    }
+]
+
+
 # Includes in <head>
 # ------------------
 
@@ -110,6 +156,12 @@ app_license = "MIT"
 #	}
 # }
 
+doc_events = {
+    "GL Entry": {
+        "after_insert": "thai_tax.custom.custom_api.create_tax_invoice_on_gl_tax",
+    },
+}
+
 # Scheduled Tasks
 # ---------------
 
@@ -150,6 +202,16 @@ app_license = "MIT"
 #	"Task": "thai_tax.task.get_dashboard_data"
 # }
 
+override_doctype_dashboards = {
+	"Purchase Invoice": "thai_tax.custom.dashboard_overrides.get_dashboard_data_for_purchase_invoice",
+	"Sales Invoice": "thai_tax.custom.dashboard_overrides.get_dashboard_data_for_sales_invoice",
+    "Expense Claim": "thai_tax.custom.dashboard_overrides.get_dashboard_data_for_expense_claim"
+
+}
+
+# override_doctype_dashboards = {
+#	"Task": "thai_tax.task.get_dashboard_data"
+# }
 # exempt linked doctypes from being automatically cancelled
 #
 # auto_cancel_exempted_doctypes = ["Auto Repeat"]

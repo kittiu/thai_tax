@@ -1,0 +1,115 @@
+{
+ "add_total_row": 1,
+ "columns": [
+  {
+   "fieldname": "company_tax_address",
+   "fieldtype": "Link",
+   "label": "Tax Address",
+   "options": "Address",
+   "width": 0
+  },
+  {
+   "fieldname": "report_date",
+   "fieldtype": "Date",
+   "label": "Report Date",
+   "width": 0
+  },
+  {
+   "fieldname": "name",
+   "fieldtype": "Link",
+   "label": "Number",
+   "options": "Sales Tax Invoice",
+   "width": 200
+  },
+  {
+   "fieldname": "party_name",
+   "fieldtype": "Data",
+   "label": "Customer",
+   "width": 250
+  },
+  {
+   "fieldname": "tax_id",
+   "fieldtype": "Data",
+   "label": "Tax ID",
+   "width": 150
+  },
+  {
+   "fieldname": "tax_base",
+   "fieldtype": "Float",
+   "label": "Base Amount",
+   "width": 0
+  },
+  {
+   "fieldname": "tax_amount",
+   "fieldtype": "Float",
+   "label": "Tax Amount",
+   "width": 0
+  },
+  {
+   "fieldname": "voucher_type",
+   "fieldtype": "Data",
+   "label": "Ref Doc Type",
+   "options": "",
+   "width": 0
+  },
+  {
+   "fieldname": "voucher_no",
+   "fieldtype": "Dynamic Link",
+   "label": "Ref Doc Number",
+   "options": "voucher_type",
+   "width": 200
+  }
+ ],
+ "creation": "2023-03-05 19:33:01.618426",
+ "disable_prepared_report": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [
+  {
+   "fieldname": "year",
+   "fieldtype": "Link",
+   "label": "Year",
+   "mandatory": 1,
+   "options": "Fiscal Year",
+   "wildcard_filter": 0
+  },
+  {
+   "fieldname": "month",
+   "fieldtype": "Select",
+   "label": "Month",
+   "mandatory": 1,
+   "options": "\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12",
+   "wildcard_filter": 0
+  },
+  {
+   "fieldname": "company_tax_address",
+   "fieldtype": "Select",
+   "label": "Tax Address",
+   "mandatory": 1,
+   "options": "\nN/A\nMH-\u0e2a\u0e33\u0e19\u0e31\u0e01\u0e07\u0e32\u0e19\u0e43\u0e2b\u0e0d\u0e48\nMH-\u0e21\u0e2b\u0e32\u0e0a\u0e31\u0e22-00002\nMH-\u0e2a\u0e32\u0e17\u0e23-00003",
+   "wildcard_filter": 0
+  }
+ ],
+ "idx": 0,
+ "is_standard": "Yes",
+ "letter_head": "",
+ "modified": "2023-03-05 19:33:07.818421",
+ "modified_by": "Administrator",
+ "module": "Thai Tax",
+ "name": "Sales Tax Report",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "query": "select report_date,\n  case\n    when docstatus = 1 then name\n    else concat(name, ' (CANCEL)')\n  end as name,\n  party_name,\n  tax_id,\n  case\n    when docstatus = 1 then tax_base\n    else 0\n  end as tax_base,\n  case\n    when docstatus = 1 then tax_amount\n    else 0\n  end as tax_amount,\n  voucher_type, voucher_no\nfrom `tabSales Tax Invoice`\nWHERE\n  docstatus in (1, 2)\n  and month(report_date) = %(month)s\n  and year(report_date) = %(year)s\n  and company_tax_address = %(company_tax_address)s\norder by name",
+ "ref_doctype": "Sales Tax Invoice",
+ "report_name": "Sales Tax Report",
+ "report_type": "Query Report",
+ "roles": [
+  {
+   "role": "Accounts Manager"
+  },
+  {
+   "role": "Accounts User"
+  }
+ ]
+}

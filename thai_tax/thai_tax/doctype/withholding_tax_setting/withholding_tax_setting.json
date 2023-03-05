@@ -1,0 +1,43 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-03-04 12:09:31.842524",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "wht_cert_image"
+ ],
+ "fields": [
+  {
+   "fieldname": "wht_cert_image",
+   "fieldtype": "Attach Image",
+   "label": "WHT Cert Image"
+  }
+ ],
+ "image_field": "wht_cert_image",
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2023-03-04 12:14:13.207499",
+ "modified_by": "Administrator",
+ "module": "Thai Tax",
+ "name": "Withholding Tax Setting",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
