@@ -76,6 +76,17 @@ fixtures = [
 
 # include js in doctype views
 # doctype_js = {"doctype" : "public/js/doctype.js"}
+
+
+doctype_js = {
+    "Payment Entry" : "public/js/payment_entry.js",
+    "Expense Claim" : "public/js/expense_claim.js",
+    "Purchase Tax Invoice" : "public/js/purchase_tax_invoice.js",
+    "Sales Tax Invoice" : "public/js/sales_tax_invoice.js",
+    "Withholding Tax Cert" : "public/js/withholding_tax_cert.js",
+}
+
+
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
@@ -105,6 +116,12 @@ fixtures = [
 #	"methods": "thai_tax.utils.jinja_methods",
 #	"filters": "thai_tax.utils.jinja_filters"
 # }
+
+jinja = {
+    "methods": [
+        "thai_tax.utils.amount_in_bahttext",
+    ],
+}
 
 # Installation
 # ------------
@@ -198,9 +215,6 @@ doc_events = {
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,
 # along with any modifications made in other Frappe apps
-# override_doctype_dashboards = {
-#	"Task": "thai_tax.task.get_dashboard_data"
-# }
 
 override_doctype_dashboards = {
 	"Purchase Invoice": "thai_tax.custom.dashboard_overrides.get_dashboard_data_for_purchase_invoice",

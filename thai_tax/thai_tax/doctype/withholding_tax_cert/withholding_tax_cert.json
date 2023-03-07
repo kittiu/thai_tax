@@ -27,7 +27,6 @@
   "voucher_type",
   "column_break_15",
   "voucher_no",
-  "total_tax_base",
   "amended_from"
  ],
  "fields": [
@@ -156,12 +155,6 @@
    "search_index": 1
   },
   {
-   "fieldname": "total_tax_base",
-   "fieldtype": "Float",
-   "label": "Total Tax Base",
-   "read_only": 1
-  },
-  {
    "fieldname": "amended_from",
    "fieldtype": "Link",
    "label": "Amended From",
@@ -174,7 +167,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-03-04 12:14:29.110794",
+ "modified": "2023-03-07 08:54:41.031728",
  "modified_by": "Administrator",
  "module": "Thai Tax",
  "name": "Withholding Tax Cert",

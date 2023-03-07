@@ -1,0 +1,182 @@
+{
+ "add_total_row": 0,
+ "columns": [
+  {
+   "fieldname": "no",
+   "fieldtype": "Int",
+   "label": "No.",
+   "width": 0
+  },
+  {
+   "fieldname": "supplier_tax_id",
+   "fieldtype": "Data",
+   "label": "Supplier Tax ID",
+   "width": 0
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Data",
+   "label": "Branch",
+   "width": 0
+  },
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "label": "Title",
+   "width": 0
+  },
+  {
+   "fieldname": "firstname",
+   "fieldtype": "Data",
+   "label": "First Name",
+   "options": "",
+   "width": 0
+  },
+  {
+   "fieldname": "lastname",
+   "fieldtype": "Data",
+   "label": "Last Name",
+   "width": 0
+  },
+  {
+   "fieldname": "address_line1",
+   "fieldtype": "Data",
+   "label": "Address",
+   "width": 0
+  },
+  {
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "label": "Tambon",
+   "width": 0
+  },
+  {
+   "fieldname": "county",
+   "fieldtype": "Data",
+   "label": "Amphur",
+   "width": 0
+  },
+  {
+   "fieldname": "state",
+   "fieldtype": "Data",
+   "label": "Province",
+   "width": 0
+  },
+  {
+   "fieldname": "pincode",
+   "fieldtype": "Data",
+   "label": "Zip Code",
+   "width": 0
+  },
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Date",
+   "width": 0
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Data",
+   "label": "Description",
+   "width": 0
+  },
+  {
+   "fieldname": "tax_base",
+   "fieldtype": "Currency",
+   "label": "Tax Base",
+   "options": "Company:company:default_currency",
+   "width": 0
+  },
+  {
+   "fieldname": "tax_rate",
+   "fieldtype": "Int",
+   "label": "Tax Rate",
+   "width": 0
+  },
+  {
+   "fieldname": "tax_amount",
+   "fieldtype": "Currency",
+   "label": "Tax Amount",
+   "options": "Company:company:default_currency",
+   "width": 0
+  },
+  {
+   "fieldname": "tax_payer",
+   "fieldtype": "Data",
+   "label": "Tax Payer",
+   "width": 0
+  },
+  {
+   "fieldname": "name",
+   "fieldtype": "Link",
+   "label": "WHT Cert.",
+   "options": "Withholding Tax Cert",
+   "width": 0
+  },
+  {
+   "fieldname": "voucher_type",
+   "fieldtype": "Data",
+   "label": "Voucher Type",
+   "width": 0
+  },
+  {
+   "fieldname": "voucher_no",
+   "fieldtype": "Dynamic Link",
+   "label": "Voucher No",
+   "options": "voucher_type",
+   "width": 0
+  }
+ ],
+ "creation": "2023-03-07 08:51:14.459804",
+ "disable_prepared_report": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [
+  {
+   "fieldname": "year",
+   "fieldtype": "Link",
+   "label": "Year",
+   "mandatory": 1,
+   "options": "Fiscal Year",
+   "wildcard_filter": 0
+  },
+  {
+   "fieldname": "month",
+   "fieldtype": "Select",
+   "label": "Month",
+   "mandatory": 1,
+   "options": "1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12",
+   "wildcard_filter": 0
+  },
+  {
+   "fieldname": "company_address",
+   "fieldtype": "Select",
+   "label": "Company Address",
+   "mandatory": 1,
+   "options": "\nN/A\nMH-\u0e2a\u0e33\u0e19\u0e31\u0e01\u0e07\u0e32\u0e19\u0e43\u0e2b\u0e0d\u0e48\nMH-\u0e21\u0e2b\u0e32\u0e0a\u0e31\u0e22-00002\nMH-\u0e2a\u0e32\u0e17\u0e23-00003",
+   "wildcard_filter": 0
+  }
+ ],
+ "idx": 0,
+ "is_standard": "Yes",
+ "letter_head": "",
+ "modified": "2023-03-07 08:51:14.459804",
+ "modified_by": "Administrator",
+ "module": "Thai Tax",
+ "name": "PND3 Report",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "query": "SELECT row_number() over(order by c.date, c.name) as no,\n  s.tax_id as supplier_tax_id,\n  s.branch_code as branch,\n  '' as title,\n  SUBSTRING(s.supplier_name, 1, CHAR_LENGTH(s.supplier_name) - LOCATE(' ', REVERSE(s.supplier_name))+1) as firstname,\n  SUBSTRING_INDEX(s.supplier_name, \" \", -1) as lastname,\n  a.address_line1,\n  a.city,\n  a.county,\n  a.state,\n  a.pincode,\n  c.date,\n  l.description,\n  round(l.tax_base, 2) tax_base,\n  l.tax_rate,\n  round(l.tax_amount, 2) tax_amount,\n  case\n    when c.tax_payer = 'Withholding' then '1'\n    when c.tax_payer = 'Paid One Time' then '3'\n    else c.tax_payer\n  end,\n  c.name,\n  c.voucher_type,\n  c.voucher_no\nFROM\n  `tabWithholding Tax Cert` as c\n  join `tabWithholding Tax Items` as l on l.parent = c.name\n  join `tabSupplier` as s on s.name = c.supplier\n  left outer join `tabAddress` as a on a.name = c.supplier_address\nWHERE\n  c.docstatus = 1 and c.income_tax_form = 'PND3'\n  and month(c.date) = %(month)s\n  and year(c.date) = %(year)s\n  and c.company_address = %(company_address)s\norder by c.date, c.name\n\n",
+ "ref_doctype": "Withholding Tax Cert",
+ "report_name": "PND3 Report",
+ "report_type": "Query Report",
+ "roles": [
+  {
+   "role": "Accounts Manager"
+  },
+  {
+   "role": "Accounts User"
+  }
+ ]
+}
