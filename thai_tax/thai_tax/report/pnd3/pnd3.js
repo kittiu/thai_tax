@@ -3,7 +3,7 @@
 /* eslint-disable */
 
 
-frappe.query_reports["PND53"] = {
+frappe.query_reports["PND3"] = {
 	filters: [
 		{
 			"fieldname": "year",

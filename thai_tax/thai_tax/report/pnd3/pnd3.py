@@ -4,6 +4,7 @@
 import frappe
 from frappe import _
 from frappe.query_builder import Case, CustomFunction
+from frappe.query_builder.custom import ConstantColumn
 
 
 def execute(filters=None):
@@ -33,8 +34,20 @@ def get_columns():
 			"width": 0,
 		},
 		{
-			"label": _("Supplier Name"),
-			"fieldname": "supplier_name",
+			"label": _("Title"),
+			"fieldname": "title",
+			"fieldtype": "Data",
+			"width": 0,
+		},
+		{
+			"label": _("First Name"),
+			"fieldname": "firstname",
+			"fieldtype": "Data",
+			"width": 0,
+		},
+		{
+			"label": _("Last Name"),
+			"fieldname": "lastname",
 			"fieldtype": "Data",
 			"width": 0,
 		},
@@ -131,6 +144,9 @@ def get_columns():
 
 def get_data(filters):
 
+#   SUBSTRING(s.supplier_name, 1, CHAR_LENGTH(s.supplier_name) - LOCATE(' ', REVERSE(s.supplier_name))+1) as firstname,
+#   SUBSTRING_INDEX(s.supplier_name, " ", -1) as lastname,
+
 	wht_cert = frappe.qb.DocType("Withholding Tax Cert")
 	wht_items = frappe.qb.DocType("Withholding Tax Items")
 	supplier = frappe.qb.DocType("Supplier")
@@ -138,6 +154,11 @@ def get_data(filters):
 	round = CustomFunction("round", ["value", "digit"])
 	month = CustomFunction("month", ["date"])
 	year = CustomFunction("year", ["date"])
+	substring = CustomFunction("substring", ["string", "pos1", "pos2"])
+	substring_index = CustomFunction("substring_index", ["string", "char", "pos"])
+	char_length = CustomFunction("char_length", ["string"])
+	locate = CustomFunction("locate", ["char", "string"])
+	reverse = CustomFunction("reverse", ["string"])
 
 	query = (
 		frappe.qb.from_(wht_cert)
@@ -150,7 +171,12 @@ def get_data(filters):
 		.select(
 			supplier.tax_id.as_("supplier_tax_id"),
 			supplier.branch_code.as_("branch"),
-			supplier.supplier_name.as_("supplier_name"),
+			ConstantColumn("").as_("title"),
+			substring(
+				supplier.supplier_name, 1,
+				char_length(supplier.supplier_name) - locate(' ', reverse(supplier.supplier_name)) + 1
+			).as_("firstname"),
+			substring_index(supplier.supplier_name, " ", -1).as_("lastname"),
 			address.address_line1.as_("address_line1"),
 			address.city.as_("city"),
 			address.county.as_("county"),
@@ -173,7 +199,7 @@ def get_data(filters):
 		.distinct()
 		.where(
   			(wht_cert.docstatus == 1)
-			& (wht_cert.income_tax_form == 'PND53')
+			& (wht_cert.income_tax_form == 'PND3')
 			& (month(wht_cert.date) == filters.get("month"))
 			& (year(wht_cert.date) == filters.get("year"))
 			

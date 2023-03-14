@@ -154,14 +154,14 @@
    "fieldtype": "Select",
    "label": "Company Address",
    "mandatory": 1,
-   "options": "\nN/A\nMH-\u0e2a\u0e33\u0e19\u0e31\u0e01\u0e07\u0e32\u0e19\u0e43\u0e2b\u0e0d\u0e48\nMH-\u0e21\u0e2b\u0e32\u0e0a\u0e31\u0e22-00002\nMH-\u0e2a\u0e32\u0e17\u0e23-00003",
+   "options": "\nN/A\nMH-Billing",
    "wildcard_filter": 0
   }
  ],
  "idx": 0,
  "is_standard": "Yes",
  "letter_head": "",
- "modified": "2023-03-07 08:51:14.459804",
+ "modified": "2023-03-14 13:01:55.825381",
  "modified_by": "Administrator",
  "module": "Thai Tax",
  "name": "PND3 Report",
