@@ -45,7 +45,23 @@ fixtures = [
                     "Purchase Invoice-tax_invoice_date",
                     "Purchase Invoice-column_break_t0qgt",
                     "Purchase Invoice-tax_invoice_number",
-                    "Purchase Invoice-tax_invoice"
+                    "Purchase Invoice-tax_invoice",
+                    "Advance Taxes and Charges-rate-precision",
+                    "Purchase Taxes and Charges-rate-precision",
+                    "Sales Taxes and Charges-rate-precision"
+                )
+            ]
+        ],
+        "doctype": "Property Setter",
+        "filters": [
+            [
+                "name",
+                "in",
+                (
+                    "Purchase Invoice-tax_invoice",
+                    "Advance Taxes and Charges-rate-precision",
+                    "Purchase Taxes and Charges-rate-precision",
+                    "Sales Taxes and Charges-rate-precision"
                 )
             ]
         ]
@@ -177,6 +193,9 @@ doc_events = {
     "GL Entry": {
         "after_insert": "thai_tax.custom.custom_api.create_tax_invoice_on_gl_tax",
     },
+    "Payment Entry": {
+        "validate": "thai_tax.custom.custom_api.validate_company_address",
+    }
 }
 
 # Scheduled Tasks
@@ -220,7 +239,6 @@ override_doctype_dashboards = {
 	"Purchase Invoice": "thai_tax.custom.dashboard_overrides.get_dashboard_data_for_purchase_invoice",
 	"Sales Invoice": "thai_tax.custom.dashboard_overrides.get_dashboard_data_for_sales_invoice",
     "Expense Claim": "thai_tax.custom.dashboard_overrides.get_dashboard_data_for_expense_claim"
-
 }
 
 # override_doctype_dashboards = {

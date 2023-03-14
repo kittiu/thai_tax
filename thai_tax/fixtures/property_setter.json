@@ -1,0 +1,50 @@
+[
+ {
+  "default_value": null,
+  "doc_type": "Purchase Taxes and Charges",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "rate",
+  "is_system_generated": 0,
+  "modified": "2023-03-14 15:43:04.356099",
+  "module": null,
+  "name": "Purchase Taxes and Charges-rate-precision",
+  "property": "precision",
+  "property_type": "Select",
+  "row_name": null,
+  "value": "6"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Sales Taxes and Charges",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "rate",
+  "is_system_generated": 0,
+  "modified": "2023-03-14 15:43:23.599867",
+  "module": null,
+  "name": "Sales Taxes and Charges-rate-precision",
+  "property": "precision",
+  "property_type": "Select",
+  "row_name": null,
+  "value": "6"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Advance Taxes and Charges",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "rate",
+  "is_system_generated": 0,
+  "modified": "2023-03-14 15:43:43.029282",
+  "module": null,
+  "name": "Advance Taxes and Charges-rate-precision",
+  "property": "precision",
+  "property_type": "Select",
+  "row_name": null,
+  "value": "6"
+ }
+]

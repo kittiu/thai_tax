@@ -98,3 +98,14 @@ def create_tax_invoice_on_gl_tax(doc, method):
             tinv = create_tax_invoice(doc, doctype, tax_amount, voucher)
             tinv = update_voucher_tinv(doctype, voucher, tinv)
             tinv.submit()
+
+
+def validate_company_address(doc, method):
+    if not doc.company_tax_address:
+        addresses = frappe.db.get_list(
+            "Address",
+            filters={"is_your_company_address": 1, "address_type": "Billing"},
+            fields=["name", "address_type"],
+        )
+        if len(addresses) == 1:
+            doc.company_tax_address = addresses[0]["name"]
