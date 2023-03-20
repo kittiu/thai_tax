@@ -83,13 +83,17 @@ def create_tax_invoice_on_gl_tax(doc, method):
     doctype = False
     party_type = False
     tax_amount = 0.0
+    voucher = frappe.get_doc(doc.voucher_type, doc.voucher_no)
+    is_return = False
+    if doc.voucher_type in ['Sales Invoice', 'Purchase Invoice']:
+        is_return = voucher.is_return  # Case Debit/Credit Note
     if doc.account in [setting.sales_tax_account, setting.purchase_tax_account]:
         tax_amount = doc.credit - doc.debit
-        if tax_amount > 0:
+        if (tax_amount > 0 and not is_return) or (tax_amount < 0 and is_return):
             doctype = 'Sales Tax Invoice'
-        if tax_amount < 0:
+        if (tax_amount < 0 and not is_return) or (tax_amount > 0 and is_return):
             doctype = 'Purchase Tax Invoice'
-        tax_amount = abs(tax_amount)
+        tax_amount = abs(tax_amount) * (is_return and -1 or 1)
     if doctype:
         voucher = frappe.get_doc(doc.voucher_type, doc.voucher_no)
         if voucher.docstatus == 2:
