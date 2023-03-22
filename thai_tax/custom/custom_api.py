@@ -81,7 +81,6 @@ def create_tax_invoice_on_gl_tax(doc, method):
     # Auto create Tax Invoice only when account equal to tax account.
     setting = frappe.get_doc('Tax Invoice Settings')
     doctype = False
-    party_type = False
     tax_amount = 0.0
     voucher = frappe.get_doc(doc.voucher_type, doc.voucher_no)
     is_return = False
@@ -113,3 +112,12 @@ def validate_company_address(doc, method):
         )
         if len(addresses) == 1:
             doc.company_tax_address = addresses[0]["name"]
+
+
+def validate_tax_invoice(doc, method):
+    # If taxes contain tax account, tax invoice is required.
+    tax_account = frappe.db.get_single_value("Tax Invoice Settings", "purchase_tax_account")
+    voucher = frappe.get_doc(doc.doctype, doc.name)
+    for tax in voucher.taxes:
+        if tax.account_head == tax_account and not doc.tax_invoice_number:
+            frappe.throw(_("This document require Tax Invoice Number"))

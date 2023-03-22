@@ -197,6 +197,14 @@ doc_events = {
     },
     "Payment Entry": {
         "validate": "thai_tax.custom.custom_api.validate_company_address",
+    },
+    "Purchase Invoice": {
+        "after_insert": "thai_tax.custom.custom_api.validate_tax_invoice",
+        "on_update": "thai_tax.custom.custom_api.validate_tax_invoice",
+    },
+    "Expense Claim": {
+        "after_insert": "thai_tax.custom.custom_api.validate_tax_invoice",
+        "on_update": "thai_tax.custom.custom_api.validate_tax_invoice",
     }
 }
 
