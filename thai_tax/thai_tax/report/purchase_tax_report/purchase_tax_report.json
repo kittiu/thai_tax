@@ -1,129 +1,24 @@
 {
  "add_total_row": 1,
- "columns": [
-  {
-   "fieldname": "company_tax_address",
-   "fieldtype": "Link",
-   "label": "Tax Address",
-   "options": "Address",
-   "width": 0
-  },
-  {
-   "fieldname": "report_date",
-   "fieldtype": "Date",
-   "label": "Report Date",
-   "width": 0
-  },
-  {
-   "fieldname": "name",
-   "fieldtype": "Data",
-   "label": "Number",
-   "options": "",
-   "width": 200
-  },
-  {
-   "fieldname": "party_name",
-   "fieldtype": "Data",
-   "label": "Supplier",
-   "width": 250
-  },
-  {
-   "fieldname": "tax_id",
-   "fieldtype": "Data",
-   "label": "Tax ID",
-   "width": 150
-  },
-  {
-   "fieldname": "branch_code",
-   "fieldtype": "Data",
-   "label": "Branch",
-   "width": 0
-  },
-  {
-   "fieldname": "supplier_address",
-   "fieldtype": "Data",
-   "label": "Supplier Address",
-   "width": 0
-  },
-  {
-   "fieldname": "tax_base",
-   "fieldtype": "Float",
-   "label": "Base Amount",
-   "width": 0
-  },
-  {
-   "fieldname": "tax_amount",
-   "fieldtype": "Float",
-   "label": "Tax Amount",
-   "width": 0
-  },
-  {
-   "fieldname": "voucher_type",
-   "fieldtype": "Data",
-   "label": "Ref Doc Type",
-   "options": "",
-   "width": 0
-  },
-  {
-   "fieldname": "voucher_no",
-   "fieldtype": "Dynamic Link",
-   "label": "Ref Doc Number",
-   "options": "voucher_type",
-   "width": 200
-  },
-  {
-   "fieldname": "tax_invoice",
-   "fieldtype": "Link",
-   "label": "Ref Tax Invoice",
-   "options": "Purchase Tax Invoice",
-   "width": 0
-  }
- ],
- "creation": "2023-03-05 19:01:08.810244",
+ "columns": [],
+ "creation": "2023-03-20 16:44:27.862127",
  "disable_prepared_report": 0,
  "disabled": 0,
  "docstatus": 0,
  "doctype": "Report",
- "filters": [
-  {
-   "fieldname": "year",
-   "fieldtype": "Link",
-   "label": "Year",
-   "mandatory": 1,
-   "options": "Fiscal Year",
-   "wildcard_filter": 0
-  },
-  {
-   "fieldname": "month",
-   "fieldtype": "Select",
-   "label": "Month",
-   "mandatory": 1,
-   "options": "\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12",
-   "wildcard_filter": 0
-  },
-  {
-   "fieldname": "company_tax_address",
-   "fieldtype": "Select",
-   "label": "Tax Address",
-   "mandatory": 1,
-   "options": "\nN/A\nMH-\u0e2a\u0e33\u0e19\u0e31\u0e01\u0e07\u0e32\u0e19\u0e43\u0e2b\u0e0d\u0e48\nMH-\u0e21\u0e2b\u0e32\u0e0a\u0e31\u0e22-00002\nMH-\u0e2a\u0e32\u0e17\u0e23-00003",
-   "wildcard_filter": 0
-  }
- ],
+ "filters": [],
  "idx": 0,
  "is_standard": "Yes",
- "letter_head": "",
- "modified": "2023-03-05 19:02:28.832092",
+ "modified": "2023-03-20 16:44:27.862127",
  "modified_by": "Administrator",
  "module": "Thai Tax",
  "name": "Purchase Tax Report",
  "owner": "Administrator",
  "prepared_report": 0,
- "query": "select company_tax_address, report_date,\n  coalesce(number, tinv.name) as name,\n  sup.supplier_name,\n  sup.tax_id,\n  sup.branch_code,\n  CONCAT_WS(' ', address_line1, address_line2, city, county, state, pincode) supplier_address,\n  tax_base,\n  tax_amount,\n  voucher_type, voucher_no, tinv.name tax_invoice\nfrom `tabPurchase Tax Invoice` tinv\nleft outer join `tabSupplier` sup on sup.name = tinv.party\nleft outer join `tabAddress` addr on addr.name = sup.supplier_primary_address\nWHERE\n  tinv.docstatus = 1\n  and month(report_date) = %(month)s\n  and year(report_date) = %(year)s\n  and company_tax_address = %(company_tax_address)s\norder by report_date",
+ "query": "",
  "ref_doctype": "Purchase Tax Invoice",
  "report_name": "Purchase Tax Report",
- "report_script": "",
- "report_type": "Query Report",
+ "report_type": "Script Report",
  "roles": [
   {
    "role": "Accounts Manager"
