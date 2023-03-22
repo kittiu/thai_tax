@@ -115,7 +115,7 @@ def get_data(filters):
 			tinv.company_tax_address.as_("company_tax_address"),
 			tinv.report_date.as_("report_date"),
 			coalesce(tinv.number, tinv.name).as_("name"),
-			sup.supplier_name.as_("supplier_name"),
+			sup.supplier_name.as_("party_name"),
 			sup.tax_id.as_("tax_id"),
 			sup.branch_code.as_("branch_code"),
 			concat_ws(
