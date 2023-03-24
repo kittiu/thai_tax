@@ -4,10 +4,7 @@ from frappe import _
 
 def create_tax_invoice_on_gl_tax(doc, method):
 
-    def create_tax_invoice(doc, doctype, tax_amount, voucher):
-        tax_account = frappe.get_doc('Account', doc.account)
-        if not tax_account.tax_rate:
-            frappe.throw(_('Cannot create Tax Invoice.<br/>No tax rate in tax account - %s.') % doc.account)
+    def create_tax_invoice(doc, doctype, base_amount, tax_amount, voucher):
         # For sales invoice / purchase invoice / payment, we can get the party from GL
         gl = frappe.db.get_list(
             'GL Entry',
@@ -39,7 +36,7 @@ def create_tax_invoice_on_gl_tax(doc, method):
             'doctype': doctype,
             'gl_entry': doc.name,
             'tax_amount': tax_amount,
-            'tax_base': tax_amount * 100 / tax_account.tax_rate,
+            'tax_base': base_amount,
             'party': party,
             'against_voucher_type': against_voucher_type,
             'against_voucher': against_voucher,
@@ -86,19 +83,33 @@ def create_tax_invoice_on_gl_tax(doc, method):
     is_return = False
     if doc.voucher_type in ['Sales Invoice', 'Purchase Invoice']:
         is_return = voucher.is_return  # Case Debit/Credit Note
+    sign = is_return and -1 or 1
+    # Tax amount, use Dr/Cr to ensure it support every case
     if doc.account in [setting.sales_tax_account, setting.purchase_tax_account]:
         tax_amount = doc.credit - doc.debit
         if (tax_amount > 0 and not is_return) or (tax_amount < 0 and is_return):
             doctype = 'Sales Tax Invoice'
         if (tax_amount < 0 and not is_return) or (tax_amount > 0 and is_return):
             doctype = 'Purchase Tax Invoice'
-        tax_amount = abs(tax_amount) * (is_return and -1 or 1)
+        tax_amount = abs(tax_amount) * sign
     if doctype:
         voucher = frappe.get_doc(doc.voucher_type, doc.voucher_no)
         if voucher.docstatus == 2:
             tax_amount = 0
         if tax_amount != 0:
-            tinv = create_tax_invoice(doc, doctype, tax_amount, voucher)
+            # Base amount, use base amount from origin document
+            if voucher.doctype == 'Expense Claim':
+                base_amount = voucher.total_sanctioned_amount
+            elif voucher.doctype in ['Purchase Invoice', 'Sales Invoice']:
+                base_amount = voucher.base_net_total
+            elif voucher.doctype == 'Payment Entry':
+                tax = list(filter(lambda x: x.account_head == doc.account, voucher.taxes))
+                base_amount = tax and tax[0].base_total - tax[0].base_tax_amount or 0
+            elif voucher.doctype == 'Journal Entry':
+                base_amount = 0
+                # TODO: base_amount = tax_amount * 100 / tax_account.tax_rate,
+            base_amount = abs(base_amount) * sign
+            tinv = create_tax_invoice(doc, doctype, base_amount, tax_amount, voucher)
             tinv = update_voucher_tinv(doctype, voucher, tinv)
             tinv.submit()
 
