@@ -83,6 +83,7 @@
   {
    "allow_on_submit": 1,
    "fetch_from": "supplier.supplier_primary_address",
+   "fetch_if_empty": 1,
    "fieldname": "supplier_address",
    "fieldtype": "Link",
    "label": "Supplier Address",
@@ -167,7 +168,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-03-07 08:54:41.031728",
+ "modified": "2023-03-24 13:29:02.023369",
  "modified_by": "Administrator",
  "module": "Thai Tax",
  "name": "Withholding Tax Cert",
