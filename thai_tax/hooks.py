@@ -54,6 +54,7 @@ fixtures = [
                     "Journal Entry-supplier_name",
                     "Journal Entry-supplier",
                     "Journal Entry Account-against_gl_entry",
+                    "Journal Entry-tax_base_amount",
                     "GL Entry-against_gl_entry",
                 )
             ]
