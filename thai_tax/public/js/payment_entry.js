@@ -18,7 +18,7 @@ frappe.ui.form.on('Payment Entry', {
                     'voucher_no': frm.doc.name
 				};
 				frappe.set_route('withholding-tax-cert', 'new-withholding-tax-cert');
-			}, __("Thai Taxation"));
+			});
 		}
 
 		// Create Clear Undue VAT Journal Entry
@@ -32,9 +32,14 @@ frappe.ui.form.on('Payment Entry', {
 				},
 				callback: function(r) {
 					if (r.message == true) {
+						// Add button
 						frm.add_custom_button(__('Clear Undue Tax'), function () {
 							frm.trigger("make_clear_vat_journal_entry");
-						}, __("Thai Taxation"));
+						});
+						// Add yellow comment
+						frm.dashboard.add_comment(
+							__("Pending tax invoice. Please clear undue tax when ready."), "yellow", true
+						);
 					}
 				}
 			});
