@@ -48,7 +48,14 @@ fixtures = [
                     "Purchase Invoice-tax_invoice",
                     "Advance Taxes and Charges-rate-precision",
                     "Purchase Taxes and Charges-rate-precision",
-                    "Sales Taxes and Charges-rate-precision"
+                    "Sales Taxes and Charges-rate-precision",
+                    "Journal Entry-column_break_3djv9",
+                    "Journal Entry-for_payment",
+                    "Journal Entry-supplier_name",
+                    "Journal Entry-supplier",
+                    "Journal Entry Account-against_gl_entry",
+                    "Journal Entry-tax_base_amount",
+                    "GL Entry-against_gl_entry",
                 )
             ]
         ],
@@ -97,6 +104,7 @@ fixtures = [
 
 
 doctype_js = {
+    "Journal Entry" : "public/js/journal_entry.js",
     "Payment Entry" : "public/js/payment_entry.js",
     "Expense Claim" : "public/js/expense_claim.js",
     "Purchase Tax Invoice" : "public/js/purchase_tax_invoice.js",
@@ -174,10 +182,9 @@ jinja = {
 # DocType Class
 # ---------------
 # Override standard doctype classes
-
-# override_doctype_class = {
-#	"ToDo": "custom_app.overrides.CustomToDo"
-# }
+override_doctype_class = {
+    "Journal Entry": "thai_tax.custom.journal_entry.JournalEntryOverrides"
+}
 
 # Document Events
 # ---------------

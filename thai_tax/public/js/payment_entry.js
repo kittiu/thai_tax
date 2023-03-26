@@ -18,7 +18,30 @@ frappe.ui.form.on('Payment Entry', {
                     'voucher_no': frm.doc.name
 				};
 				frappe.set_route('withholding-tax-cert', 'new-withholding-tax-cert');
-			    
+			});
+		}
+
+		// Create Clear Undue VAT Journal Entry
+		if(frm.doc.docstatus == 1 && frm.doc.payment_type == 'Pay') {
+			// Check first whether all tax has been cleared, to add button
+			frappe.call({
+				method: 'thai_tax.custom.custom_api.to_clear_undue_tax',
+				args: {
+					"dt": cur_frm.doc.doctype,
+					"dn": cur_frm.doc.name
+				},
+				callback: function(r) {
+					if (r.message == true) {
+						// Add button
+						frm.add_custom_button(__('Clear Undue Tax'), function () {
+							frm.trigger("make_clear_vat_journal_entry");
+						});
+						// Add yellow comment
+						frm.dashboard.add_comment(
+							__("Pending tax invoice. Please clear undue tax when ready."), "yellow", true
+						);
+					}
+				}
 			});
 		}
 	},
@@ -49,5 +72,19 @@ frappe.ui.form.on('Payment Entry', {
             })
         })
 	},
+
+	make_clear_vat_journal_entry() {
+		return frappe.call({
+			method: 'thai_tax.custom.custom_api.get_clear_vat_journal_entry',
+			args: {
+				"dt": cur_frm.doc.doctype,
+				"dn": cur_frm.doc.name
+			},
+			callback: function(r) {
+				var doclist = frappe.model.sync(r.message);
+				frappe.set_route("Form", doclist[0].doctype, doclist[0].name);
+			}
+		});
+	}
 
 })
