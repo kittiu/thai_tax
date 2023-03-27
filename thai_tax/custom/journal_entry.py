@@ -4,26 +4,6 @@ from erpnext.accounts.doctype.journal_entry.journal_entry import JournalEntry
 
 class JournalEntryOverrides(JournalEntry):
 
-	def make_gl_entries(self, cancel=0, adv_adj=0):
-		from erpnext.accounts.general_ledger import make_gl_entries
-
-		gl_map = self.build_gl_map()
-		if self.voucher_type in ("Deferred Revenue", "Deferred Expense"):
-			update_outstanding = "No"
-		else:
-			update_outstanding = "Yes"
-
-		# For Tax Clearing
-		merge_entries = True
-		if self.for_payment:
-			merge_entries = False
-		# --
-
-		if gl_map:
-			make_gl_entries(gl_map, cancel=cancel, adv_adj=adv_adj,
-				merge_entries=merge_entries, # For Tax Clearing
-				update_outstanding=update_outstanding)
-
 	def build_gl_map(self):
 		gl_map = []
 		for d in self.get("accounts"):
