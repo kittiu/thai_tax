@@ -96,7 +96,7 @@ def create_tax_invoice_on_gl_tax(doc, method):
         if tax_amount != 0:
             # Base amount, use base amount from origin document
             if voucher.doctype == 'Expense Claim':
-                base_amount = voucher.total_sanctioned_amount
+                base_amount = voucher.base_amount_overwrite or voucher.total_sanctioned_amount
             elif voucher.doctype in ['Purchase Invoice', 'Sales Invoice']:
                 base_amount = voucher.base_net_total
             elif voucher.doctype == 'Payment Entry':
@@ -105,6 +105,13 @@ def create_tax_invoice_on_gl_tax(doc, method):
             elif voucher.doctype == 'Journal Entry':
                 base_amount = voucher.tax_base_amount
             base_amount = abs(base_amount) * sign
+            # Validate base amount
+            tax_rate = frappe.get_cached_value('Account', doc.account, 'tax_rate')
+            if round(base_amount * tax_rate/100) != round(tax_amount):
+                frappe.throw(_(
+                    'Tax should be {0}% of the base amount<br/>'
+                    '<b>Note:</b> To correct base amount, fill in Base Amount Overwrite.'.format(tax_rate)
+                ))
             tinv = create_tax_invoice(doc, doctype, base_amount, tax_amount, voucher)
             tinv = update_voucher_tinv(doctype, voucher, tinv)
             tinv.submit()
@@ -140,6 +147,7 @@ def get_uncleared_tax_amount(gl_name):
         uncleared_debit = 0
     return uncleared_debit
 
+
 def get_clear_undue_tax_je(payment_no):
     je = frappe.db.get_all(
         'Journal Entry',
@@ -174,10 +182,6 @@ def get_clear_vat_journal_entry(dt, dn):
             continue
         alloc_percent = ref.allocated_amount / ref.total_amount
         # Find gl entry of ref doc that has undue amount
-        filters={
-            'voucher_type': ref.reference_doctype,
-            'voucher_no': ref.reference_name,
-        }
         gl_entries = frappe.db.get_all(
             'GL Entry',
             filters={

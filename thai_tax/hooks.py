@@ -56,6 +56,8 @@ fixtures = [
                     "Journal Entry Account-against_gl_entry",
                     "Journal Entry-tax_base_amount",
                     "GL Entry-against_gl_entry",
+                    "Expense Claim-column_break_rqacr",
+                    "Expense Claim-base_amount_overwrite",
                 )
             ]
         ],
