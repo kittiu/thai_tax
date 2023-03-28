@@ -1,0 +1,16 @@
+[
+ {
+  "create_log": 1,
+  "cron_format": "30 * * * *",
+  "docstatus": 0,
+  "doctype": "Scheduled Job Type",
+  "frequency": "Cron",
+  "last_execution": "2023-03-26 12:30:24.729830",
+  "method": "erpnext.accounts.doctype.gl_entry.gl_entry.rename_gle_sle_docs",
+  "modified": "2023-03-26 12:52:32.269274",
+  "name": "gl_entry.rename_gle_sle_docs",
+  "next_execution": "2023-03-26 13:30:00",
+  "server_script": null,
+  "stopped": 1
+ }
+]

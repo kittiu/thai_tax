@@ -29,9 +29,6 @@ frappe.query_reports["PND3"] = {
 					}
 				};
 			}
-
-
-
 		}
 	]
 };

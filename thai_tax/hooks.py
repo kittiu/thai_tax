@@ -56,6 +56,11 @@ fixtures = [
                     "Journal Entry Account-against_gl_entry",
                     "Journal Entry-tax_base_amount",
                     "GL Entry-against_gl_entry",
+                    "Expense Claim-column_break_rqacr",
+                    "Expense Claim-base_amount_overwrite",
+                    "Advance Taxes and Charges-against_gl_entry",
+                    "Payment Entry-column_break_bqyze",
+                    "Payment Entry-tax_base_amount",
                 )
             ]
         ],
@@ -71,6 +76,18 @@ fixtures = [
                     "Advance Taxes and Charges-rate-precision",
                     "Purchase Taxes and Charges-rate-precision",
                     "Sales Taxes and Charges-rate-precision"
+                )
+            ]
+        ]
+    },
+    {
+        "doctype": "Scheduled Job Type",
+        "filters": [
+            [
+                "name",
+                "in",
+                (
+                    "gl_entry.rename_gle_sle_docs",  # Stop it
                 )
             ]
         ]
@@ -102,6 +119,12 @@ fixtures = [
 # include js in doctype views
 # doctype_js = {"doctype" : "public/js/doctype.js"}
 
+# Monkey patching
+# ------------------
+import erpnext.accounts.general_ledger
+import thai_tax.custom.general_ledger
+
+erpnext.accounts.general_ledger.check_if_in_list = thai_tax.custom.general_ledger.check_if_in_list
 
 doctype_js = {
     "Journal Entry" : "public/js/journal_entry.js",
@@ -183,7 +206,8 @@ jinja = {
 # ---------------
 # Override standard doctype classes
 override_doctype_class = {
-    "Journal Entry": "thai_tax.custom.journal_entry.JournalEntryOverrides"
+    "Journal Entry": "thai_tax.custom.journal_entry.JournalEntryOverrides",
+    "Payment Entry": "thai_tax.custom.payment_entry.PaymentEntryOverrides"
 }
 
 # Document Events
@@ -204,6 +228,7 @@ doc_events = {
     },
     "Payment Entry": {
         "validate": "thai_tax.custom.custom_api.validate_company_address",
+        "on_update": "thai_tax.custom.custom_api.clear_sales_invoice_undue_tax",
     },
     "Purchase Invoice": {
         "after_insert": "thai_tax.custom.custom_api.validate_tax_invoice",
@@ -212,7 +237,7 @@ doc_events = {
     "Expense Claim": {
         "after_insert": "thai_tax.custom.custom_api.validate_tax_invoice",
         "on_update": "thai_tax.custom.custom_api.validate_tax_invoice",
-    }
+    },
 }
 
 # Scheduled Tasks
