@@ -225,6 +225,7 @@ override_doctype_class = {
 doc_events = {
     "GL Entry": {
         "after_insert": "thai_tax.custom.custom_api.create_tax_invoice_on_gl_tax",
+        "before_insert": "thai_tax.custom.custom_api.update_against_gl_entry_on_invoice_return",
     },
     "Payment Entry": {
         "validate": "thai_tax.custom.custom_api.validate_company_address",
