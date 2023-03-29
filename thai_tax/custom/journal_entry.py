@@ -2,7 +2,7 @@ from frappe.utils import flt
 from erpnext.accounts.doctype.journal_entry.journal_entry import JournalEntry
 
 
-class JournalEntryOverrides(JournalEntry):
+class ThaiTaxJournalEntry(JournalEntry):
 
 	def build_gl_map(self):
 		gl_map = []

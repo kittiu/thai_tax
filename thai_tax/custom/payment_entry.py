@@ -1,11 +1,10 @@
 import frappe
 from frappe.utils import flt
 from erpnext.accounts.utils import get_account_currency
-from erpnext.accounts.general_ledger import make_gl_entries, process_gl_map
-from erpnext.accounts.doctype.payment_entry.payment_entry import PaymentEntry
+from hrms.overrides.employee_payment_entry import EmployeePaymentEntry
 
 
-class PaymentEntryOverrides(PaymentEntry):
+class ThaiTaxPaymentEntry(EmployeePaymentEntry):
 
 	def add_tax_gl_entries(self, gl_entries):
 		for d in self.get("taxes"):
