@@ -106,7 +106,7 @@ def create_tax_invoice_on_gl_tax(doc, method):
             base_amount = abs(base_amount) * sign
             # Validate base amount
             tax_rate = frappe.get_cached_value('Account', doc.account, 'tax_rate')
-            if round(base_amount * tax_rate/100) != round(tax_amount):
+            if abs((base_amount * tax_rate/100) - tax_amount) < 0.1:
                 frappe.throw(_(
                     'Tax should be {0}% of the base amount<br/>'
                     '<b>Note:</b> To correct base amount, fill in Base Amount Overwrite.'.format(tax_rate)
