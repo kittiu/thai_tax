@@ -47,7 +47,7 @@ def get_columns():
 			"width": 0,
 		},
 		{
-			"label": _("Cleare Tax Amount"),
+			"label": _("Clear Tax Amount"),
 			"fieldname": "clear_tax_amount",
 			"fieldtype": "Float",
 			"width": 0,
@@ -72,47 +72,30 @@ def get_data(filters):
 	undue = frappe.qb.DocType("GL Entry")
 	clear = frappe.qb.DocType("GL Entry")
 	round = CustomFunction("round", ["value", "digit"])
-	
 	setting = frappe.get_doc('Tax Invoice Settings')
 	purchase_tax = setting.purchase_tax_account_undue
+	avg_undue = Coalesce(Avg(undue.debit-undue.credit), 0)
+	sum_clear = Coalesce(Sum(clear.debit-clear.credit), 0)
 
 	query = (
 		frappe.qb.from_(undue)
-		.left_join(clear)
+		.left_outer_join(clear)
 		.on(
-			undue.name == clear.against_gl_entry
-			& undue.against_gl_entry.isnull()
+			(undue.name == clear.against_gl_entry)
+			& (clear.account == undue.account)
 		)
 		.select(
 			undue.account,
 			undue.voucher_type,
 			undue.voucher_no,
 			undue.posting_date,
-			Case()
-			.when(undue.account == purchase_tax, (
-				Coalesce(Avg(undue.debit-undue.credit), 0).as_("undue_tax_amount")
-			))
-			.else_(
-				-Coalesce(Avg(undue.debit-undue.credit), 0).as_("undue_tax_amount"),
-			).as_("undue_tax_amount"),
-			Case()
-			.when(undue.account == purchase_tax, (
-				Coalesce(Sum(clear.credit-clear.debit), 0).as_("clear_tax_amount"),
-			))
-			.else_(
-				-Coalesce(Sum(clear.credit-clear.debit), 0).as_("clear_tax_amount"),
-			).as_("clear_tax_amount"),
-			Case()
-			.when(undue.account == purchase_tax, (
-				(Coalesce(Avg(undue.debit-undue.credit), 0)-Coalesce(Sum(clear.credit-clear.debit), 0)).as_("open_tax_amount")
-			))
-			.else_(
-				-(Coalesce(Avg(undue.debit-undue.credit), 0)-Coalesce(Sum(clear.credit-clear.debit), 0)).as_("open_tax_amount")
-			).as_("open_tax_amount"),
+			Case().when(undue.account == purchase_tax, avg_undue).else_(-avg_undue).as_("undue_tax_amount"),
+			Case().when(undue.account == purchase_tax, -sum_clear).else_(sum_clear).as_("clear_tax_amount"),
+			Case().when(undue.account == purchase_tax, avg_undue + sum_clear).else_(-(avg_undue + sum_clear)).as_("open_tax_amount"),
 			GroupConcat(clear.voucher_no).distinct().as_("clearing_vouchers")
 		)
+		.where(undue.against_gl_entry.isnull())
 		.where(undue.account == filters["account"])
-		.where(clear.account == filters["account"])
 		.groupby(undue.account, undue.voucher_type, undue.voucher_no, undue.posting_date)
 		.orderby(undue.account, undue.voucher_type, undue.voucher_no, undue.posting_date)
 	)
@@ -126,10 +109,7 @@ def get_data(filters):
 	if filters.get("to_date"):
 		query = query.where(undue.posting_date <= filters["to_date"])
 
-	query2 = (
-		frappe.qb.from_(query)
-		.select("*")
-	)
+	query2 = frappe.qb.from_(query).select("*")
 
 	if filters.get("is_open") == 1:
 		query2 = query2.where(round(query.open_tax_amount, 3) != 0)

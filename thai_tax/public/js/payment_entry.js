@@ -22,7 +22,7 @@ frappe.ui.form.on('Payment Entry', {
 		}
 
 		// Create Clear Undue VAT Journal Entry
-		if(frm.doc.docstatus == 1 && frm.doc.payment_type == 'Pay') {
+		if(frm.doc.docstatus == 1) {
 			// Check first whether all tax has been cleared, to add button
 			frappe.call({
 				method: 'thai_tax.custom.custom_api.to_clear_undue_tax',

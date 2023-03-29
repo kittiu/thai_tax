@@ -1,6 +1,4 @@
-from frappe.utils import flt
-from erpnext.accounts.doctype.journal_entry.journal_entry import JournalEntry
-from frappe.utils import cint, cstr, flt, formatdate, getdate, now
+from frappe.utils import cstr
 
 
 def check_if_in_list(gle, gl_map, dimensions=None):
