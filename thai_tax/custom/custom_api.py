@@ -135,32 +135,9 @@ def validate_tax_invoice(doc, method):
         if tax.account_head == tax_account and not doc.tax_invoice_number:
             frappe.throw(_('This document require Tax Invoice Number'))
  
-
-def get_uncleared_tax_amount(gl_name, payment_type):
-    or_filters = {'name': gl_name, 'against_gl_entry': gl_name}
-    uncleared_gl = frappe.db.get_all(
-        'GL Entry', or_filters=or_filters,
-        fields=['debit_in_account_currency', 'credit_in_account_currency'],
-    )
-    uncleared_tax = sum([x.debit_in_account_currency - x.credit_in_account_currency for x in uncleared_gl])
-    if payment_type == 'Receive':
-        uncleared_tax = -uncleared_tax
-    # if uncleared_tax < 0:
-    #     uncleared_tax = 0
-    return uncleared_tax
-
-# def get_clear_undue_tax_je(payment_no):
-#     je = frappe.db.get_all(
-#         'Journal Entry',
-#         filters={'docstatus': 1, 'for_payment': payment_no}
-#     )
-#     return je and je[0]['name']
-
 @frappe.whitelist()
 def to_clear_undue_tax(dt, dn):
     to_clear = True
-    # if get_clear_undue_tax_je(dn):
-    #     to_clear = False
     if not get_clear_vat_journal_entry(dt, dn):
         to_clear = False
     return to_clear
@@ -235,18 +212,24 @@ def get_clear_vat_journal_entry(dt, dn):
     je.tax_base_amount = base_total
     return je
 
-def clear_sales_invoice_undue_tax(doc, method):
+def clear_invoice_undue_tax(doc, method):
     old_doc = doc.get_doc_before_save()
-    if old_doc and old_doc.total_allocated_amount == doc.total_allocated_amount:
+    if (
+        old_doc
+        and old_doc.total_allocated_amount == doc.total_allocated_amount
+        and old_doc.has_purchase_tax_invoice == doc.has_purchase_tax_invoice
+    ):
         return
     doc.taxes = []
     tax_setting = frappe.get_single('Tax Invoice Settings')
     base_total = 0
     tax_total = 0
     references = filter(lambda x: x.reference_doctype in (
-        'Sales Invoice'
+        'Sales Invoice', 'Purchase Invoice',
     ), doc.references)
     for ref in references:
+        if ref.reference_doctype == 'Purchase Invoice' and not doc.has_purchase_tax_invoice:
+            return
         if not ref.allocated_amount or not ref.total_amount:
             continue
         alloc_percent = ref.allocated_amount / ref.total_amount
@@ -263,26 +246,40 @@ def clear_sales_invoice_undue_tax(doc, method):
                 'credit_in_account_currency',
             ])
         for gl in gl_entries:
+            # Prepration
+            tax_account_undue = tax_setting.sales_tax_account_undue
+            tax_account = tax_setting.sales_tax_account
+            sales = True
+            if ref.reference_doctype == 'Purchase Invoice':
+                tax_account_undue = tax_setting.purchase_tax_account_undue
+                tax_account = tax_setting.purchase_tax_account
+                sales = False
             credit = gl['credit_in_account_currency']
             debit = gl['debit_in_account_currency']
             # Find Base
             report_type = frappe.get_cached_value('Account', gl['account'], 'report_type')
             if report_type == 'Profit and Loss':
                 base_amount = alloc_percent * (credit-debit)
-                base_total += base_amount
+                if sales:
+                    base_total += base_amount
+                else:
+                    base_total -= base_amount
             # Find Tax
-            if gl['account'] == tax_setting.sales_tax_account_undue:
+            if gl['account'] == tax_account_undue:
                 undue_tax = alloc_percent * (credit-debit)
-                undue_remain = get_uncleared_tax_amount(gl['name'], 'Receive')
+                undue_remain = get_uncleared_tax_amount(gl['name'], doc.payment_type)
                 undue_tax = undue_tax if undue_tax < undue_remain else undue_remain
                 if not undue_tax:
                     continue
+                if not sales:  # Reverse for Purchase
+                    undue_tax = -undue_tax
+                    # base_total = -base_total
                 doc.append('taxes',
                     {
                         'add_deduct_tax': undue_tax > 0 and 'Deduct' or 'Add',
                         'description': 'Clear Undue Tax',
                         'charge_type': 'Actual',
-                        'account_head': tax_setting.sales_tax_account_undue,
+                        'account_head': tax_account_undue,
                         'tax_amount': undue_tax,
                         'against_gl_entry': gl['name'],
                     },
@@ -296,7 +293,7 @@ def clear_sales_invoice_undue_tax(doc, method):
             'add_deduct_tax': undue_tax > 0 and 'Add' or 'Deduct',
             'description': 'Clear Undue Tax',
             'charge_type': 'Actual',
-            'account_head': tax_setting.sales_tax_account,
+            'account_head': tax_account,
             'tax_amount': tax_total,
         },
 	)
@@ -317,3 +314,14 @@ def update_against_gl_entry_on_invoice_return(doc, method):
                 fields=['name'],
             )
             doc.against_gl_entry = gl[0]['name']
+
+def get_uncleared_tax_amount(gl_name, payment_type):
+    or_filters = {'name': gl_name, 'against_gl_entry': gl_name}
+    uncleared_gl = frappe.db.get_all(
+        'GL Entry', or_filters=or_filters,
+        fields=['debit_in_account_currency', 'credit_in_account_currency'],
+    )
+    uncleared_tax = sum([x.debit_in_account_currency - x.credit_in_account_currency for x in uncleared_gl])
+    if payment_type == 'Receive':
+        uncleared_tax = -uncleared_tax
+    return uncleared_tax
