@@ -61,6 +61,7 @@ fixtures = [
                     "Advance Taxes and Charges-against_gl_entry",
                     "Payment Entry-column_break_bqyze",
                     "Payment Entry-tax_base_amount",
+                    "Payment Entry-has_purchase_tax_invoice",
                 )
             ]
         ],
@@ -229,7 +230,7 @@ doc_events = {
     },
     "Payment Entry": {
         "validate": "thai_tax.custom.custom_api.validate_company_address",
-        "on_update": "thai_tax.custom.custom_api.clear_sales_invoice_undue_tax",
+        "on_update": "thai_tax.custom.custom_api.clear_invoice_undue_tax",
     },
     "Purchase Invoice": {
         "after_insert": "thai_tax.custom.custom_api.validate_tax_invoice",

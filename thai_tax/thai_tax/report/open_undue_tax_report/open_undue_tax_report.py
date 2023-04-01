@@ -91,7 +91,7 @@ def get_data(filters):
 			undue.posting_date,
 			Case().when(undue.account == purchase_tax, avg_undue).else_(-avg_undue).as_("undue_tax_amount"),
 			Case().when(undue.account == purchase_tax, -sum_clear).else_(sum_clear).as_("clear_tax_amount"),
-			Case().when(undue.account == purchase_tax, avg_undue + sum_clear).else_(-(avg_undue + sum_clear)).as_("open_tax_amount"),
+			Case().when(undue.account == purchase_tax, avg_undue + sum_clear).else_(-avg_undue-sum_clear).as_("open_tax_amount"),
 			GroupConcat(clear.voucher_no).distinct().as_("clearing_vouchers")
 		)
 		.where(undue.against_gl_entry.isnull())
