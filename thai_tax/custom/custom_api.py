@@ -289,7 +289,7 @@ def get_undue_tax(doc, ref, gl, tax):
     # Find Tax
     if gl['account'] == tax_account_undue:
         undue_tax = alloc_percent * (credit-debit)
-        undue_remain = get_uncleared_tax_amount(gl['name'], doc.payment_type)
+        undue_remain = get_uncleared_tax_amount(gl, doc.payment_type)
         if not undue_remain:
             undue_tax = 0
         else:
@@ -311,10 +311,11 @@ def update_against_gl_entry_on_invoice_return(doc, method):
             )
             doc.against_gl_entry = gl[0]['name']
 
-def get_uncleared_tax_amount(gl_name, payment_type):
-    or_filters = {'name': gl_name, 'against_gl_entry': gl_name}
+def get_uncleared_tax_amount(gl, payment_type):
     uncleared_gl = frappe.db.get_all(
-        'GL Entry', or_filters=or_filters,
+        'GL Entry',
+        filters={'account': gl['account']},
+        or_filters={'name': gl['name'], 'against_gl_entry': gl['name']},
         fields=['debit_in_account_currency', 'credit_in_account_currency'],
     )
     uncleared_tax = sum([x.debit_in_account_currency - x.credit_in_account_currency for x in uncleared_gl])
