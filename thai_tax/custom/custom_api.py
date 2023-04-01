@@ -1,3 +1,5 @@
+import json
+from ast import literal_eval
 import frappe
 from frappe import _
 
@@ -115,7 +117,6 @@ def create_tax_invoice_on_gl_tax(doc, method):
             tinv = update_voucher_tinv(doctype, voucher, tinv)
             tinv.submit()
 
-
 def validate_company_address(doc, method):
     if not doc.company_tax_address:
         addresses = frappe.db.get_all(
@@ -126,7 +127,6 @@ def validate_company_address(doc, method):
         if len(addresses) == 1:
             doc.company_tax_address = addresses[0]['name']
 
-
 def validate_tax_invoice(doc, method):
     # If taxes contain tax account, tax invoice is required.
     tax_account = frappe.db.get_single_value('Tax Invoice Settings', 'purchase_tax_account')
@@ -134,16 +134,16 @@ def validate_tax_invoice(doc, method):
     for tax in voucher.taxes:
         if tax.account_head == tax_account and not doc.tax_invoice_number:
             frappe.throw(_('This document require Tax Invoice Number'))
- 
+
 @frappe.whitelist()
 def to_clear_undue_tax(dt, dn):
     to_clear = True
-    if not get_clear_vat_journal_entry(dt, dn):
+    if not make_clear_vat_journal_entry(dt, dn):
         to_clear = False
     return to_clear
 
 @frappe.whitelist()
-def get_clear_vat_journal_entry(dt, dn):
+def make_clear_vat_journal_entry(dt, dn):
     tax = frappe.get_single('Tax Invoice Settings')
     doc = frappe.get_doc(dt, dn)
     je = frappe.new_doc('Journal Entry')
@@ -321,3 +321,64 @@ def get_uncleared_tax_amount(gl_name, payment_type):
     if payment_type == 'Receive':
         uncleared_tax = -uncleared_tax
     return uncleared_tax
+
+@frappe.whitelist()
+def make_withholding_tax_cert(filters, doc):
+    wht = get_withholding_tax(filters, doc)
+    filters = literal_eval(filters)
+    pay = json.loads(doc)
+    cert = frappe.new_doc('Withholding Tax Cert')
+    cert.supplier = pay.get('party_type') == 'Supplier' and pay.get('party') or ''
+    supplier = frappe.get_doc('Supplier', cert.supplier)
+    cert.supplier_name = supplier and supplier.supplier_name or ''
+    cert.supplier_address = supplier and supplier.supplier_primary_address or ''
+    cert.voucher_type = 'Payment Entry'
+    cert.voucher_no = pay.get('name')
+    cert.company_address = filters.get('company_address')
+    cert.income_tax_form = filters.get('income_tax_form')
+    cert.date = filters.get('date')
+    cert.append('withholding_tax_items', {
+        'tax_base': -wht['base'],
+        'tax_rate': wht['rate'],
+        'tax_amount': -wht['amount'],
+    })
+    return cert
+
+@frappe.whitelist()
+def get_withholding_tax(filters, doc):
+    filters = literal_eval(filters)
+    pay = json.loads(doc)
+    wht = frappe.get_doc('Withholding Tax Type', filters['wht_type'])
+    company = frappe.get_doc('Company', pay['company'])
+    for ref in pay.get('references'):
+        if ref.get('reference_doctype') not in ['Purchase Invoice', 'Expense Claim']:
+            return
+        if not ref.get('allocated_amount') or not ref.get('total_amount'):
+            continue
+        # Find gl entry of ref doc that has undue amount
+        gl_entries = frappe.db.get_all(
+            'GL Entry',
+            filters={
+                'voucher_type': ref['reference_doctype'],
+                'voucher_no': ref['reference_name'],
+            },
+            fields=[
+                'name', 'account',
+                'debit_in_account_currency',
+                'credit_in_account_currency',
+            ])
+        base_amount = 0
+        for gl in gl_entries:
+            credit = gl['credit_in_account_currency']
+            debit = gl['debit_in_account_currency']
+            alloc_percent = ref['allocated_amount'] / ref['total_amount']
+            report_type = frappe.get_cached_value('Account', gl['account'], 'report_type')
+            if report_type == 'Profit and Loss':
+                base_amount += alloc_percent * (credit-debit)
+    return {
+        'account': wht.account,
+        'cost_center': company.cost_center,
+        'base': base_amount,
+        'rate': wht.percent,
+        'amount': wht.percent/100 * base_amount
+    }
