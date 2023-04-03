@@ -27,7 +27,7 @@ frappe.ui.form.on('Address', {
 
 	get_address_by_tax_id: function(frm, filters) {
 		return frappe.call({
-			method: 'thai_tax.custom.custom_api.get_address_by_tax_id',
+			method: 'thai_tax.utils.get_address_by_tax_id',
 			args: {
 				tax_id: filters.tax_id,
 				branch: filters.branch
