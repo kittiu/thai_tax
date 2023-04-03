@@ -45,7 +45,7 @@ def finalize_address_dict(data):
         "vFloorNumber": "ชั้น",
         "vVillageName": "หมู่บ้าน",
         "vRoomNumber": "ห้อง",
-        "vHouseNumber": "เลขที่",
+        # "vHouseNumber": "เลขที่",
         "vMooNumber": "หมู่ที่",
         "vSoiName": "ซอย",
         "vStreetName": "ถนน",
@@ -56,7 +56,7 @@ def finalize_address_dict(data):
     name = '%s %s' % (data.get('vtitleName'), data.get('vName'))
     if data.get('vSurname', '-') != '-':
         name = '%s %s' % (name, data['vSurname'])
-    house = get_part(data, 'vHouseNumber', '%s %s')
+    house = data.get('vHouseNumber', '')
     village = get_part(data, 'vVillageName', '%s %s')
     soi = get_part(data, 'vSoiName', '%s %s')
     moo = get_part(data, 'vMooNumber', '%s %s')
