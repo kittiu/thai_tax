@@ -337,9 +337,10 @@ def make_withholding_tax_cert(filters, doc):
     pay = json.loads(doc)
     cert = frappe.new_doc('Withholding Tax Cert')
     cert.supplier = pay.get('party_type') == 'Supplier' and pay.get('party') or ''
-    supplier = frappe.get_doc('Supplier', cert.supplier)
-    cert.supplier_name = supplier and supplier.supplier_name or ''
-    cert.supplier_address = supplier and supplier.supplier_primary_address or ''
+    if cert.supplier != '':
+        supplier = frappe.get_doc('Supplier', cert.supplier)
+        cert.supplier_name = supplier and supplier.supplier_name or ''
+        cert.supplier_address = supplier and supplier.supplier_primary_address or ''
     cert.voucher_type = 'Payment Entry'
     cert.voucher_no = pay.get('name')
     cert.company_address = filters.get('company_address')
