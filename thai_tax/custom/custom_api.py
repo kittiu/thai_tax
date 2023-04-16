@@ -159,7 +159,7 @@ def make_clear_vat_journal_entry(dt, dn):
     base_total = 0
     tax_total = 0
     references = filter(
-        lambda x: x.reference_doctype == 'Purchase Invoice',
+        lambda x: x.reference_doctype in ('Purchase Invoice', 'Expense Claim'),
         doc.references
     )
     for ref in references:
@@ -179,7 +179,7 @@ def make_clear_vat_journal_entry(dt, dn):
             ])
         for gl in gl_entries:
             (undue_tax, base_amount, account_undue, account) = get_undue_tax(doc, ref, gl, tax)
-            if ref.reference_doctype == 'Purchase Invoice':
+            if ref.reference_doctype in ('Purchase Invoice', 'Expense Claim'):
                 undue_tax = -undue_tax
                 base_amount = -base_amount
             base_total += base_amount
@@ -220,11 +220,11 @@ def clear_invoice_undue_tax(doc, method):
     base_total = 0
     tax_total = 0
     references = filter(
-        lambda x: x.reference_doctype in ('Sales Invoice', 'Purchase Invoice'),
+        lambda x: x.reference_doctype in ('Sales Invoice', 'Purchase Invoice', 'Expense Claim'),
         doc.references
     )
     for ref in references:
-        if ref.reference_doctype == 'Purchase Invoice' and not doc.has_purchase_tax_invoice:
+        if ref.reference_doctype in ('Purchase Invoice', 'Expense Claim') and not doc.has_purchase_tax_invoice:
             return
         if not ref.allocated_amount or not ref.total_amount:
             continue
@@ -242,7 +242,7 @@ def clear_invoice_undue_tax(doc, method):
             ])
         for gl in gl_entries:
             (undue_tax, base_amount, account_undue, account) = get_undue_tax(doc, ref, gl, tax)
-            if ref.reference_doctype == 'Purchase Invoice':
+            if ref.reference_doctype in ('Purchase Invoice', 'Expense Claim'):
                 undue_tax = -undue_tax
                 base_amount = -base_amount
             base_total += base_amount
@@ -279,7 +279,7 @@ def get_undue_tax(doc, ref, gl, tax):
     base_amount = 0
     tax_account_undue = tax.sales_tax_account_undue
     tax_account = tax.sales_tax_account
-    if ref.reference_doctype == 'Purchase Invoice':
+    if ref.reference_doctype in ('Purchase Invoice', 'Expense Claim'):
         tax_account_undue = tax.purchase_tax_account_undue
         tax_account = tax.purchase_tax_account
     credit = gl['credit_in_account_currency']
