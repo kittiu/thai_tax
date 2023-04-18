@@ -20,6 +20,6 @@ class PurchaseTaxInvoice(Document):
 
 	def compute_report_date(self):
 		if int(self.months_delayed) == 0:
-			self.report_date = self.date
+			self.db_set("report_date", self.date)
 		else:
-			self.report_date = add_months(self.date, int(self.months_delayed))
+			self.db_set("report_date",add_months(self.date, int(self.months_delayed)))
