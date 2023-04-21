@@ -134,9 +134,15 @@ def validate_tax_invoice(doc, method):
     # If taxes contain tax account, tax invoice is required.
     tax_account = frappe.db.get_single_value('Tax Invoice Settings', 'purchase_tax_account')
     voucher = frappe.get_doc(doc.doctype, doc.name)
+    has_vat = False
     for tax in voucher.taxes:
-        if tax.account_head == tax_account and not doc.tax_invoice_number:
-            frappe.throw(_('This document require Tax Invoice Number'))
+        if tax.account_head == tax_account:
+            has_vat = True
+            break
+    if has_vat and not doc.tax_invoice_number:
+        frappe.throw(_('This document require Tax Invoice Number'))
+    if not has_vat and doc.tax_invoice_number:
+        frappe.throw(_('This document has no due VAT, please remove Tax Invoice Number'))
 
 @frappe.whitelist()
 def to_clear_undue_tax(dt, dn):
