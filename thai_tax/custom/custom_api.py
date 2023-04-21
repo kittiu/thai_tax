@@ -151,7 +151,7 @@ def make_clear_vat_journal_entry(dt, dn):
     doc = frappe.get_doc(dt, dn)
     je = frappe.new_doc('Journal Entry')
     je.entry_type = 'Journal Entry'
-    je.supplier = doc.party
+    je.supplier = doc.party_type == 'Supplier' and doc.party or False
     je.company_tax_address = doc.company_tax_address
     je.for_payment = doc.name
     je.user_remark = _('Clear Undue Tax on %s' % doc.name)
