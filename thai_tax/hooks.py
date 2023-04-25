@@ -209,7 +209,8 @@ jinja = {
 # Override standard doctype classes
 override_doctype_class = {
     "Journal Entry": "thai_tax.custom.journal_entry.ThaiTaxJournalEntry",
-    "Payment Entry": "thai_tax.custom.payment_entry.ThaiTaxPaymentEntry"
+    "Payment Entry": "thai_tax.custom.payment_entry.ThaiTaxPaymentEntry",
+    "Employee Advance": "thai_tax.custom.employee_advance.ThaiTaxEmployeeAdvance",
 }
 
 # Document Events
