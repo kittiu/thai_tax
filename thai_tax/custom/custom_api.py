@@ -27,13 +27,14 @@ def create_tax_invoice_on_gl_tax(doc, method):
                     'against_voucher_type': 'Payment Entry',
                     'against_voucher': je.for_payment,
                 })
-        if not party:
-            frappe.throw(_('Cannot find party for the creating tax invoice'))
-        # Case expense claim, partner is not employee, but the supplier, correct it first.
-        if doc.voucher_type == 'Expense Claim':
-            if not voucher.supplier:
-                frappe.throw(_('Please fill in Supplier for Purchase Tax Invoice'))
+        # Case Payment Entry, party must be of type customer/supplier only
+        if doc.voucher_type == 'Payment Entry' and doc.party_type == 'Employee':
             party = voucher.supplier
+        # Case expense claim, partner should be supplier, not employee
+        if doc.voucher_type == 'Expense Claim':
+            party = voucher.supplier
+        if not party:
+            frappe.throw(_('Please fill in Supplier for Purchase Tax Invoice'))
         # Create Tax Invoice
         tinv_dict.update({
             'doctype': doctype,

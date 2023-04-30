@@ -62,6 +62,8 @@ fixtures = [
                     "Payment Entry-column_break_bqyze",
                     "Payment Entry-tax_base_amount",
                     "Payment Entry-has_purchase_tax_invoice",
+                    "Payment Entry-supplier",
+                    "Payment Entry-supplier_name",
                 )
             ]
         ],
