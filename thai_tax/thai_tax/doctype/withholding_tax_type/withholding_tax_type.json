@@ -10,7 +10,6 @@
  "field_order": [
   "title",
   "percent",
-  "before_vat",
   "account"
  ],
  "fields": [
@@ -31,13 +30,6 @@
    "reqd": 1
   },
   {
-   "description": "Withhold amount based on base amount before % of VAT",
-   "fieldname": "before_vat",
-   "fieldtype": "Int",
-   "in_list_view": 1,
-   "label": "Before VAT"
-  },
-  {
    "fieldname": "account",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -48,7 +40,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-03-04 12:14:08.873964",
+ "modified": "2023-05-30 10:21:30.807340",
  "modified_by": "Administrator",
  "module": "Thai Tax",
  "name": "Withholding Tax Type",
