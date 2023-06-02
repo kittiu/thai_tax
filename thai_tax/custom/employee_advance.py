@@ -5,6 +5,10 @@ from frappe.utils import flt
 from hrms.hr.doctype.employee_advance.employee_advance import EmployeeAdvance
 
 
+class EmployeeAdvanceOverPayment(frappe.ValidationError):
+	pass
+
+
 class ThaiTaxEmployeeAdvance(EmployeeAdvance):
 
     # For python bug fix only, to be removed if fixed in the core
