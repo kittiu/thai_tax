@@ -1,0 +1,23 @@
+{
+ "action": "View Report",
+ "creation": "2023-06-23 11:18:50.186869",
+ "description": "Sales Tax Report and Purchase Tax Repot can be found in separated menu.",
+ "docstatus": 0,
+ "doctype": "Onboarding Step",
+ "idx": 0,
+ "is_complete": 0,
+ "is_single": 0,
+ "is_skipped": 0,
+ "modified": "2023-06-23 11:32:45.317640",
+ "modified_by": "Administrator",
+ "name": "Tax Report",
+ "owner": "Administrator",
+ "reference_report": "Sales Tax Report",
+ "report_description": "You can also go to Purchase Tax Report for the same",
+ "report_reference_doctype": "Sales Tax Invoice",
+ "report_type": "Script Report",
+ "show_form_tour": 0,
+ "show_full_form": 0,
+ "title": "Sales / Purchase Tax Report",
+ "validate_action": 1
+}
