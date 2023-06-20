@@ -67,10 +67,6 @@ frappe.ui.form.on('Payment Entry', {
 						frm.add_custom_button(__('Clear Undue Tax'), function () {
 							frm.trigger("make_clear_vat_journal_entry");
 						});
-						// Add yellow comment
-						frm.dashboard.add_comment(
-							__("Pending tax invoice. Please clear undue tax when ready."), "yellow", true
-						);
 					}
 				}
 			});

@@ -52,13 +52,10 @@ fixtures = [
                     "Journal Entry-column_break_3djv9",
                     "Journal Entry-for_payment",
                     "Journal Entry-supplier_name",
-                    "Journal Entry-supplier",
-                    "Journal Entry Account-against_gl_entry",
+                    "Journal Entry-supplier",   
                     "Journal Entry-tax_base_amount",
-                    "GL Entry-against_gl_entry",
                     "Expense Claim-column_break_rqacr",
                     "Expense Claim-base_amount_overwrite",
-                    "Advance Taxes and Charges-against_gl_entry",
                     "Payment Entry-column_break_bqyze",
                     "Payment Entry-tax_base_amount",
                     "Payment Entry-has_purchase_tax_invoice",
@@ -83,18 +80,6 @@ fixtures = [
             ]
         ]
     },
-    {
-        "doctype": "Scheduled Job Type",
-        "filters": [
-            [
-                "name",
-                "in",
-                (
-                    "gl_entry.rename_gle_sle_docs",  # Stop it
-                )
-            ]
-        ]
-    }
 ]
 
 
@@ -121,13 +106,6 @@ fixtures = [
 
 # include js in doctype views
 # doctype_js = {"doctype" : "public/js/doctype.js"}
-
-# Monkey patching
-# ------------------
-import erpnext.accounts.general_ledger
-import thai_tax.custom.general_ledger
-
-erpnext.accounts.general_ledger.check_if_in_list = thai_tax.custom.general_ledger.check_if_in_list
 
 doctype_js = {
     "Journal Entry" : "public/js/journal_entry.js",
@@ -210,8 +188,6 @@ jinja = {
 # ---------------
 # Override standard doctype classes
 override_doctype_class = {
-    "Journal Entry": "thai_tax.custom.journal_entry.ThaiTaxJournalEntry",
-    "Payment Entry": "thai_tax.custom.payment_entry.ThaiTaxPaymentEntry",
     "Employee Advance": "thai_tax.custom.employee_advance.ThaiTaxEmployeeAdvance",
 }
 
@@ -230,7 +206,6 @@ override_doctype_class = {
 doc_events = {
     "GL Entry": {
         "after_insert": "thai_tax.custom.custom_api.create_tax_invoice_on_gl_tax",
-        "before_insert": "thai_tax.custom.custom_api.update_against_gl_entry_on_invoice_return",
     },
     "Payment Entry": {
         "validate": "thai_tax.custom.custom_api.validate_company_address",
