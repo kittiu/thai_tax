@@ -281,8 +281,8 @@ def get_undue_tax(doc, ref, gl, tax):
     if ref.reference_doctype in ('Purchase Invoice', 'Expense Claim'):
         tax_account_undue = tax.purchase_tax_account_undue
         tax_account = tax.purchase_tax_account
-    credit = gl['credit_in_account_currency']
-    debit = gl['debit_in_account_currency']
+    credit = gl['credit']
+    debit = gl['debit']
     alloc_percent = ref.allocated_amount / ref.total_amount
     # Find Base
     report_type = frappe.get_cached_value('Account', gl['account'], 'report_type')
@@ -301,7 +301,7 @@ def get_undue_tax(doc, ref, gl, tax):
 def get_uncleared_tax_amount(gl, payment_type):
     # If module bs_reconcile is installed, uncleared_tax = residual amount
     # else uncleared_tax is the debit - credit amount
-    uncleared_tax = gl.debit_in_account_currency - gl.credit_in_account_currency
+    uncleared_tax = gl.debit - gl.credit
     if gl.get("is_reconcile"):
         uncleared_tax = gl.get("residual")
     if payment_type == 'Receive':
@@ -351,13 +351,13 @@ def get_withholding_tax(filters, doc):
             },
             fields=[
                 'name', 'account',
-                'debit_in_account_currency',
-                'credit_in_account_currency',
+                'debit',
+                'credit',
             ])
         base_amount = 0
         for gl in gl_entries:
-            credit = gl['credit_in_account_currency']
-            debit = gl['debit_in_account_currency']
+            credit = gl['credit']
+            debit = gl['debit']
             alloc_percent = ref['allocated_amount'] / ref['total_amount']
             report_type = frappe.get_cached_value('Account', gl['account'], 'report_type')
             if report_type == 'Profit and Loss':
