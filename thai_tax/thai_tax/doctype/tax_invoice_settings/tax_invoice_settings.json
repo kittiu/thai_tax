@@ -65,7 +65,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-03-25 14:26:27.834806",
+ "modified": "2023-06-22 09:27:29.366931",
  "modified_by": "Administrator",
  "module": "Thai Tax",
  "name": "Tax Invoice Settings",
@@ -73,13 +73,17 @@
  "permissions": [
   {
    "create": 1,
-   "delete": 1,
-   "email": 1,
-   "print": 1,
    "read": 1,
-   "role": "System Manager",
-   "share": 1,
+   "role": "Accounts Manager",
    "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Sales User"
+  },
+  {
+   "read": 1,
+   "role": "Purchase User"
   }
  ],
  "sort_field": "modified",
