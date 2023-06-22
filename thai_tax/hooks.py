@@ -3,9 +3,10 @@ from . import __version__ as app_version
 app_name = "thai_tax"
 app_title = "Thai Tax"
 app_publisher = "Kitti U."
-app_description = "Thailand Taxation - VAT, WHT"
+app_description = "Thailand Taxation Compliance"
 app_email = "kittiu@gmail.com"
 app_license = "MIT"
+required_apps = ["erpnext", "hrms"]
 
 fixtures = [
     {
@@ -158,7 +159,7 @@ jinja = {
 # ------------
 
 # before_install = "thai_tax.install.before_install"
-# after_install = "thai_tax.install.after_install"
+after_install = "thai_tax.install.after_install"
 
 # Uninstallation
 # ------------
