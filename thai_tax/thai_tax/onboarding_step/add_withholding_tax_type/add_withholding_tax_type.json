@@ -1,0 +1,20 @@
+{
+ "action": "Create Entry",
+ "creation": "2023-06-23 10:43:23.606425",
+ "description": "To withhold tax, you need to create Withholding Tyes, i.e., 1%, 2%, 3% and 5%",
+ "docstatus": 0,
+ "doctype": "Onboarding Step",
+ "idx": 0,
+ "is_complete": 0,
+ "is_single": 0,
+ "is_skipped": 0,
+ "modified": "2023-06-23 11:59:02.378631",
+ "modified_by": "Administrator",
+ "name": "Add Withholding Tax Type",
+ "owner": "Administrator",
+ "reference_document": "Withholding Tax Type",
+ "show_form_tour": 0,
+ "show_full_form": 0,
+ "title": "Add Withholding Tax Type",
+ "validate_action": 1
+}
