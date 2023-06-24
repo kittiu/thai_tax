@@ -257,6 +257,8 @@ def clear_invoice_undue_tax(doc, method):
                 )
                 tax_total += undue_tax
     if not tax_total:
+        if doc.has_purchase_tax_invoice:
+            frappe.throw(_("No undue tax amount to clear. Please uncheck 'Has Purchase Tax Invoice'"))
         return
     # To due tax
     doc.append('taxes',
