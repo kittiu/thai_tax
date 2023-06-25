@@ -1,0 +1,22 @@
+{
+ "action": "Go to Page",
+ "callback_message": "",
+ "callback_title": "Purchase Tax Invoices are created after you have record tax.",
+ "creation": "2023-06-23 11:16:19.993908",
+ "description": "Purchase Tax Invoice is created when tax ledger is recorded, which could be,\n1. On Purchase Invoice for case buying product\n2. On Payment for case buying service and can record tax on payment\n3. On Journal Entry for case buying service and record tax afterward",
+ "docstatus": 0,
+ "doctype": "Onboarding Step",
+ "idx": 0,
+ "is_complete": 0,
+ "is_single": 0,
+ "is_skipped": 0,
+ "modified": "2023-06-23 11:17:34.911128",
+ "modified_by": "Administrator",
+ "name": "Browse Purchase Tax Invoices",
+ "owner": "Administrator",
+ "path": "List/Purchase Tax Invoice",
+ "show_form_tour": 0,
+ "show_full_form": 0,
+ "title": "Browse Purchase Tax Invoices",
+ "validate_action": 1
+}

@@ -1,0 +1,50 @@
+{
+ "allow_roles": [
+  {
+   "role": "Accounts Manager"
+  },
+  {
+   "role": "Accounts User"
+  }
+ ],
+ "creation": "2023-06-22 11:58:50.650153",
+ "docstatus": 0,
+ "doctype": "Module Onboarding",
+ "documentation_url": "https://github.com/kittiu/thai_tax/blob/main/README.md",
+ "idx": 0,
+ "is_complete": 0,
+ "modified": "2023-06-23 11:59:08.144024",
+ "modified_by": "Administrator",
+ "module": "Thai Tax",
+ "name": "Thai Tax",
+ "owner": "Administrator",
+ "steps": [
+  {
+   "step": "Add Thai Tax Accounts"
+  },
+  {
+   "step": "Tax Invoice Setting"
+  },
+  {
+   "step": "Add Withholding Tax Type"
+  },
+  {
+   "step": "Browse Sales Tax Invoices"
+  },
+  {
+   "step": "Browse Purchase Tax Invoices"
+  },
+  {
+   "step": "Tax Report"
+  },
+  {
+   "step": "Browse Withholding Tax Cert"
+  },
+  {
+   "step": "Withholding Tax Report (PND)"
+  }
+ ],
+ "subtitle": "Tax Account Setup, Withholding Tax Type",
+ "success_message": "The Thai Tax Module is all set up!",
+ "title": "Setup Thai Tax"
+}

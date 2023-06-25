@@ -1,0 +1,22 @@
+{
+ "action": "Show Form Tour",
+ "creation": "2023-06-22 12:59:15.255686",
+ "description": "#Tax Invoice Settings\n\nAfter you have created all required tax account, please map them in the settings.",
+ "docstatus": 0,
+ "doctype": "Onboarding Step",
+ "field": "sales_tax_account",
+ "idx": 0,
+ "is_complete": 0,
+ "is_single": 1,
+ "is_skipped": 0,
+ "modified": "2023-06-22 14:00:33.605362",
+ "modified_by": "Administrator",
+ "name": "Tax Invoice Setting",
+ "owner": "Administrator",
+ "reference_document": "Tax Invoice Settings",
+ "show_form_tour": 0,
+ "show_full_form": 0,
+ "title": "Tax Invoice Setting",
+ "validate_action": 1,
+ "value_to_validate": "%"
+}
