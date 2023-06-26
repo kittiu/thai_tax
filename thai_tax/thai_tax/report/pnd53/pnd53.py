@@ -162,25 +162,22 @@ def get_data(filters):
 			wht_items.tax_rate.as_("tax_rate"),
 			round(wht_items.tax_amount, 2).as_("tax_amount"),
 			Case()
-			.when(wht_cert.tax_payer == 'Withholding', '1')
-			.when(wht_cert.tax_payer == 'Paid One Time', '3')
+			.when(wht_cert.tax_payer == "Withholding", "1")
+			.when(wht_cert.tax_payer == "Paid One Time", "3")
 			.else_(wht_cert.tax_payer)
 			.as_("tax_payer"),
 			wht_cert.name.as_("name"),
 			wht_cert.voucher_type.as_("voucher_type"),
-			wht_cert.voucher_no.as_("voucher_no")
+			wht_cert.voucher_no.as_("voucher_no"),
 		)
 		.distinct()
 		.where(
-  			(wht_cert.docstatus == 1)
-			& (wht_cert.income_tax_form == 'PND53')
+			(wht_cert.docstatus == 1)
+			& (wht_cert.income_tax_form == "PND53")
 			& (month(wht_cert.date) == filters.get("month"))
 			& (year(wht_cert.date) == filters.get("year"))
-			
 		)
-		.orderby(
-			wht_cert.date, wht_cert.name
-		)
+		.orderby(wht_cert.date, wht_cert.name)
 	)
 
 	if filters.get("company_address"):
@@ -191,6 +188,6 @@ def get_data(filters):
 	# Add row number column
 	i = 0
 	for r in result:
-		r['no'] = i = i+1
+		r["no"] = i = i + 1
 
 	return result

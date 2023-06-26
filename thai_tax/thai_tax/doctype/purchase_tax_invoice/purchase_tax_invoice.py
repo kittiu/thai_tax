@@ -4,8 +4,8 @@ import frappe
 from frappe.model.document import Document
 from frappe.utils import add_months
 
-class PurchaseTaxInvoice(Document):
 
+class PurchaseTaxInvoice(Document):
 	def validate(self):
 		self.compute_report_date()
 
@@ -22,4 +22,4 @@ class PurchaseTaxInvoice(Document):
 		if int(self.months_delayed) == 0:
 			self.db_set("report_date", self.date)
 		else:
-			self.db_set("report_date",add_months(self.date, int(self.months_delayed)))
+			self.db_set("report_date", add_months(self.date, int(self.months_delayed)))

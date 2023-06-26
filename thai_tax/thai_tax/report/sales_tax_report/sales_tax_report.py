@@ -97,10 +97,7 @@ def get_data(filters):
 			.as_("name"),
 			tinv.party_name.as_("party_name"),
 			cust.tax_id.as_("tax_id"),
-			Case()
-			.when(tinv.docstatus == 1, round(tinv.tax_base, 2))
-			.else_(0)
-			.as_("tax_base"),
+			Case().when(tinv.docstatus == 1, round(tinv.tax_base, 2)).else_(0).as_("tax_base"),
 			Case()
 			.when(tinv.docstatus == 1, round(tinv.tax_amount, 2))
 			.else_(0)
@@ -109,13 +106,11 @@ def get_data(filters):
 			tinv.voucher_no.as_("voucher_no"),
 		)
 		.where(
-  			(tinv.docstatus.isin([1, 2]))
+			(tinv.docstatus.isin([1, 2]))
 			& (month(tinv.report_date) == filters.get("month"))
 			& (year(tinv.report_date) == filters.get("year"))
 		)
-		.orderby(
-			tinv.name
-		)
+		.orderby(tinv.name)
 	)
 
 	if filters.get("company_tax_address"):

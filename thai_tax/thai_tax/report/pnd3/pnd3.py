@@ -144,8 +144,8 @@ def get_columns():
 
 def get_data(filters):
 
-#   SUBSTRING(s.supplier_name, 1, CHAR_LENGTH(s.supplier_name) - LOCATE(' ', REVERSE(s.supplier_name))+1) as firstname,
-#   SUBSTRING_INDEX(s.supplier_name, " ", -1) as lastname,
+	#   SUBSTRING(s.supplier_name, 1, CHAR_LENGTH(s.supplier_name) - LOCATE(' ', REVERSE(s.supplier_name))+1) as firstname,
+	#   SUBSTRING_INDEX(s.supplier_name, " ", -1) as lastname,
 
 	wht_cert = frappe.qb.DocType("Withholding Tax Cert")
 	wht_items = frappe.qb.DocType("Withholding Tax Items")
@@ -173,8 +173,11 @@ def get_data(filters):
 			supplier.branch_code.as_("branch"),
 			ConstantColumn("").as_("title"),
 			substring(
-				supplier.supplier_name, 1,
-				char_length(supplier.supplier_name) - locate(' ', reverse(supplier.supplier_name)) + 1
+				supplier.supplier_name,
+				1,
+				char_length(supplier.supplier_name)
+				- locate(" ", reverse(supplier.supplier_name))
+				+ 1,
 			).as_("firstname"),
 			substring_index(supplier.supplier_name, " ", -1).as_("lastname"),
 			address.address_line1.as_("address_line1"),
@@ -188,25 +191,22 @@ def get_data(filters):
 			wht_items.tax_rate.as_("tax_rate"),
 			round(wht_items.tax_amount, 2).as_("tax_amount"),
 			Case()
-			.when(wht_cert.tax_payer == 'Withholding', '1')
-			.when(wht_cert.tax_payer == 'Paid One Time', '3')
+			.when(wht_cert.tax_payer == "Withholding", "1")
+			.when(wht_cert.tax_payer == "Paid One Time", "3")
 			.else_(wht_cert.tax_payer)
 			.as_("tax_payer"),
 			wht_cert.name.as_("name"),
 			wht_cert.voucher_type.as_("voucher_type"),
-			wht_cert.voucher_no.as_("voucher_no")
+			wht_cert.voucher_no.as_("voucher_no"),
 		)
 		.distinct()
 		.where(
-  			(wht_cert.docstatus == 1)
-			& (wht_cert.income_tax_form == 'PND3')
+			(wht_cert.docstatus == 1)
+			& (wht_cert.income_tax_form == "PND3")
 			& (month(wht_cert.date) == filters.get("month"))
 			& (year(wht_cert.date) == filters.get("year"))
-			
 		)
-		.orderby(
-			wht_cert.date, wht_cert.name
-		)
+		.orderby(wht_cert.date, wht_cert.name)
 	)
 
 	if filters.get("company_address"):
@@ -217,6 +217,6 @@ def get_data(filters):
 	# Add row number column
 	i = 0
 	for r in result:
-		r['no'] = i = i+1
+		r["no"] = i = i + 1
 
 	return result

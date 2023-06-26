@@ -4,8 +4,8 @@ import frappe
 from frappe.model.document import Document
 from frappe.utils import add_months
 
-class SalesTaxInvoice(Document):
 
+class SalesTaxInvoice(Document):
 	def validate(self):
 		self.compute_report_date()
 
