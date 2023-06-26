@@ -5,29 +5,29 @@
 frappe.query_reports["Sales Tax Report"] = {
 	filters: [
 		{
-			"fieldname": "year",
-			"label": __("Year"),
-			"fieldtype": "Link",
-			"options": "Fiscal Year",
+			fieldname: "year",
+			label: __("Year"),
+			fieldtype: "Link",
+			options: "Fiscal Year",
 		},
 		{
-			"fieldname": "month",
-			"label": __("Month"),
-			"fieldtype": "Select",
-			"options": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
+			fieldname: "month",
+			label: __("Month"),
+			fieldtype: "Select",
+			options: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
 		},
 		{
-			"fieldname": "company_tax_address",
-			"label": __("Company Address"),
-			"fieldtype": "Link",
-			"options": "Address",
+			fieldname: "company_tax_address",
+			label: __("Company Address"),
+			fieldtype: "Link",
+			options: "Address",
 			get_query: () => {
 				return {
 					filters: {
-						'is_your_company_address': 1
-					}
+						is_your_company_address: 1,
+					},
 				};
-			}
-		}
-	]
+			},
+		},
+	],
 };

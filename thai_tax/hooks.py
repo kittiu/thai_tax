@@ -9,78 +9,78 @@ app_license = "MIT"
 required_apps = ["erpnext", "hrms"]
 
 fixtures = [
-    {
-        "doctype": "Custom Field",
-        "filters": [
-            [
-                "name",
-                "in",
-                (
-                    "Payment Entry-column_break_yio5c",
-                    "Payment Entry-section_break_owjbn",
-                    "Supplier-branch_code",
-                    "Customer-branch_code",
-                    "Expense Claim-tax_invoice_date",
-                    "Expense Claim-supplier_name",
-                    "Expense Claim-column_break_6atpw",
-                    "Expense Claim-supplier",
-                    "Expense Claim-tax_invoice_number",
-                    "Expense Claim-section_break_uodhb",
-                    "Expense Claim-company_tax_address",
-                    "Expense Claim-tax_invoice",
-                    "Journal Entry-tax_invoice_date",
-                    "Journal Entry-column_break_1ds9m",
-                    "Journal Entry-tax_invoice_number",
-                    "Journal Entry-section_break_hjndu",
-                    "Journal Entry-company_tax_address",
-                    "Journal Entry-tax_invoice",
-                    "Payment Entry-tax_invoice_date",
-                    "Payment Entry-tax_invoice_number",
-                    "Payment Entry-company_tax_address",
-                    "Payment Entry-tax_invoice",
-                    "Payment Entry-deduct_withholding_tax",
-                    "Sales Invoice-tax_invoice_number",
-                    "Sales Invoice-column_break_cijbv",
-                    "Sales Invoice-tax_invoice_date",
-                    "Sales Invoice-tax_invoice",
-                    "Purchase Invoice-tax_invoice_date",
-                    "Purchase Invoice-column_break_t0qgt",
-                    "Purchase Invoice-tax_invoice_number",
-                    "Purchase Invoice-tax_invoice",
-                    "Advance Taxes and Charges-rate-precision",
-                    "Purchase Taxes and Charges-rate-precision",
-                    "Sales Taxes and Charges-rate-precision",
-                    "Journal Entry-column_break_3djv9",
-                    "Journal Entry-for_payment",
-                    "Journal Entry-supplier_name",
-                    "Journal Entry-supplier",   
-                    "Journal Entry-tax_base_amount",
-                    "Expense Claim-column_break_rqacr",
-                    "Expense Claim-base_amount_overwrite",
-                    "Payment Entry-column_break_bqyze",
-                    "Payment Entry-tax_base_amount",
-                    "Payment Entry-has_purchase_tax_invoice",
-                    "Payment Entry-supplier",
-                    "Payment Entry-supplier_name",
-                )
-            ]
-        ],
-    },
-    {
-        "doctype": "Property Setter",
-        "filters": [
-            [
-                "name",
-                "in",
-                (
-                    "Purchase Invoice-tax_invoice",
-                    "Advance Taxes and Charges-rate-precision",
-                    "Purchase Taxes and Charges-rate-precision",
-                    "Sales Taxes and Charges-rate-precision"
-                )
-            ]
-        ]
-    },
+	{
+		"doctype": "Custom Field",
+		"filters": [
+			[
+				"name",
+				"in",
+				(
+					"Payment Entry-column_break_yio5c",
+					"Payment Entry-section_break_owjbn",
+					"Supplier-branch_code",
+					"Customer-branch_code",
+					"Expense Claim-tax_invoice_date",
+					"Expense Claim-supplier_name",
+					"Expense Claim-column_break_6atpw",
+					"Expense Claim-supplier",
+					"Expense Claim-tax_invoice_number",
+					"Expense Claim-section_break_uodhb",
+					"Expense Claim-company_tax_address",
+					"Expense Claim-tax_invoice",
+					"Journal Entry-tax_invoice_date",
+					"Journal Entry-column_break_1ds9m",
+					"Journal Entry-tax_invoice_number",
+					"Journal Entry-section_break_hjndu",
+					"Journal Entry-company_tax_address",
+					"Journal Entry-tax_invoice",
+					"Payment Entry-tax_invoice_date",
+					"Payment Entry-tax_invoice_number",
+					"Payment Entry-company_tax_address",
+					"Payment Entry-tax_invoice",
+					"Payment Entry-deduct_withholding_tax",
+					"Sales Invoice-tax_invoice_number",
+					"Sales Invoice-column_break_cijbv",
+					"Sales Invoice-tax_invoice_date",
+					"Sales Invoice-tax_invoice",
+					"Purchase Invoice-tax_invoice_date",
+					"Purchase Invoice-column_break_t0qgt",
+					"Purchase Invoice-tax_invoice_number",
+					"Purchase Invoice-tax_invoice",
+					"Advance Taxes and Charges-rate-precision",
+					"Purchase Taxes and Charges-rate-precision",
+					"Sales Taxes and Charges-rate-precision",
+					"Journal Entry-column_break_3djv9",
+					"Journal Entry-for_payment",
+					"Journal Entry-supplier_name",
+					"Journal Entry-supplier",
+					"Journal Entry-tax_base_amount",
+					"Expense Claim-column_break_rqacr",
+					"Expense Claim-base_amount_overwrite",
+					"Payment Entry-column_break_bqyze",
+					"Payment Entry-tax_base_amount",
+					"Payment Entry-has_purchase_tax_invoice",
+					"Payment Entry-supplier",
+					"Payment Entry-supplier_name",
+				),
+			]
+		],
+	},
+	{
+		"doctype": "Property Setter",
+		"filters": [
+			[
+				"name",
+				"in",
+				(
+					"Purchase Invoice-tax_invoice",
+					"Advance Taxes and Charges-rate-precision",
+					"Purchase Taxes and Charges-rate-precision",
+					"Sales Taxes and Charges-rate-precision",
+				),
+			]
+		],
+	},
 ]
 
 
@@ -109,13 +109,13 @@ fixtures = [
 # doctype_js = {"doctype" : "public/js/doctype.js"}
 
 doctype_js = {
-    "Journal Entry" : "public/js/journal_entry.js",
-    "Payment Entry" : "public/js/payment_entry.js",
-    "Expense Claim" : "public/js/expense_claim.js",
-    "Purchase Tax Invoice" : "public/js/purchase_tax_invoice.js",
-    "Sales Tax Invoice" : "public/js/sales_tax_invoice.js",
-    "Withholding Tax Cert" : "public/js/withholding_tax_cert.js",
-    "Address" : "public/js/address.js",
+	"Journal Entry": "public/js/journal_entry.js",
+	"Payment Entry": "public/js/payment_entry.js",
+	"Expense Claim": "public/js/expense_claim.js",
+	"Purchase Tax Invoice": "public/js/purchase_tax_invoice.js",
+	"Sales Tax Invoice": "public/js/sales_tax_invoice.js",
+	"Withholding Tax Cert": "public/js/withholding_tax_cert.js",
+	"Address": "public/js/address.js",
 }
 
 
@@ -131,7 +131,7 @@ doctype_js = {
 
 # website user home page (by Role)
 # role_home_page = {
-#	"Role": "home_page"
+#     "Role": "home_page"
 # }
 
 # Generators
@@ -145,14 +145,14 @@ doctype_js = {
 
 # add methods and filters to jinja environment
 # jinja = {
-#	"methods": "thai_tax.utils.jinja_methods",
-#	"filters": "thai_tax.utils.jinja_filters"
+#     "methods": "thai_tax.utils.jinja_methods",
+#     "filters": "thai_tax.utils.jinja_filters"
 # }
 
 jinja = {
-    "methods": [
-        "thai_tax.utils.amount_in_bahttext",
-    ],
+	"methods": [
+		"thai_tax.utils.amount_in_bahttext",
+	],
 }
 
 # Installation
@@ -178,18 +178,18 @@ after_install = "thai_tax.install.after_install"
 # Permissions evaluated in scripted ways
 
 # permission_query_conditions = {
-#	"Event": "frappe.desk.doctype.event.event.get_permission_query_conditions",
+#     "Event": "frappe.desk.doctype.event.event.get_permission_query_conditions",
 # }
 #
 # has_permission = {
-#	"Event": "frappe.desk.doctype.event.event.has_permission",
+#     "Event": "frappe.desk.doctype.event.event.has_permission",
 # }
 
 # DocType Class
 # ---------------
 # Override standard doctype classes
 override_doctype_class = {
-    "Employee Advance": "thai_tax.custom.employee_advance.ThaiTaxEmployeeAdvance",
+	"Employee Advance": "thai_tax.custom.employee_advance.ThaiTaxEmployeeAdvance",
 }
 
 # Document Events
@@ -197,50 +197,50 @@ override_doctype_class = {
 # Hook on document methods and events
 
 # doc_events = {
-#	"*": {
-#		"on_update": "method",
-#		"on_cancel": "method",
-#		"on_trash": "method"
-#	}
+#     "*": {
+#         "on_update": "method",
+#         "on_cancel": "method",
+#         "on_trash": "method"
+#     }
 # }
 
 doc_events = {
-    "GL Entry": {
-        "after_insert": "thai_tax.custom.custom_api.create_tax_invoice_on_gl_tax",
-    },
-    "Payment Entry": {
-        "validate": "thai_tax.custom.custom_api.validate_company_address",
-        "on_update": "thai_tax.custom.custom_api.clear_invoice_undue_tax",
-    },
-    "Purchase Invoice": {
-        "after_insert": "thai_tax.custom.custom_api.validate_tax_invoice",
-        "on_update": "thai_tax.custom.custom_api.validate_tax_invoice",
-    },
-    "Expense Claim": {
-        "after_insert": "thai_tax.custom.custom_api.validate_tax_invoice",
-        "on_update": "thai_tax.custom.custom_api.validate_tax_invoice",
-    },
+	"GL Entry": {
+		"after_insert": "thai_tax.custom.custom_api.create_tax_invoice_on_gl_tax",
+	},
+	"Payment Entry": {
+		"validate": "thai_tax.custom.custom_api.validate_company_address",
+		"on_update": "thai_tax.custom.custom_api.clear_invoice_undue_tax",
+	},
+	"Purchase Invoice": {
+		"after_insert": "thai_tax.custom.custom_api.validate_tax_invoice",
+		"on_update": "thai_tax.custom.custom_api.validate_tax_invoice",
+	},
+	"Expense Claim": {
+		"after_insert": "thai_tax.custom.custom_api.validate_tax_invoice",
+		"on_update": "thai_tax.custom.custom_api.validate_tax_invoice",
+	},
 }
 
 # Scheduled Tasks
 # ---------------
 
 # scheduler_events = {
-#	"all": [
-#		"thai_tax.tasks.all"
-#	],
-#	"daily": [
-#		"thai_tax.tasks.daily"
-#	],
-#	"hourly": [
-#		"thai_tax.tasks.hourly"
-#	],
-#	"weekly": [
-#		"thai_tax.tasks.weekly"
-#	],
-#	"monthly": [
-#		"thai_tax.tasks.monthly"
-#	],
+#     "all": [
+#         "thai_tax.tasks.all"
+#     ],
+#     "daily": [
+#         "thai_tax.tasks.daily"
+#     ],
+#     "hourly": [
+#         "thai_tax.tasks.hourly"
+#     ],
+#     "weekly": [
+#         "thai_tax.tasks.weekly"
+#     ],
+#     "monthly": [
+#         "thai_tax.tasks.monthly"
+#     ],
 # }
 
 # Testing
@@ -252,7 +252,7 @@ doc_events = {
 # ------------------------------
 #
 # override_whitelisted_methods = {
-#	"frappe.desk.doctype.event.event.get_events": "thai_tax.event.get_events"
+#     "frappe.desk.doctype.event.event.get_events": "thai_tax.event.get_events"
 # }
 #
 # each overriding function accepts a `data` argument;
@@ -262,11 +262,11 @@ doc_events = {
 override_doctype_dashboards = {
 	"Purchase Invoice": "thai_tax.custom.dashboard_overrides.get_dashboard_data_for_purchase_invoice",
 	"Sales Invoice": "thai_tax.custom.dashboard_overrides.get_dashboard_data_for_sales_invoice",
-    "Expense Claim": "thai_tax.custom.dashboard_overrides.get_dashboard_data_for_expense_claim"
+	"Expense Claim": "thai_tax.custom.dashboard_overrides.get_dashboard_data_for_expense_claim",
 }
 
 # override_doctype_dashboards = {
-#	"Task": "thai_tax.task.get_dashboard_data"
+#     "Task": "thai_tax.task.get_dashboard_data"
 # }
 # exempt linked doctypes from being automatically cancelled
 #
@@ -291,29 +291,29 @@ override_doctype_dashboards = {
 # --------------------
 
 # user_data_fields = [
-#	{
-#		"doctype": "{doctype_1}",
-#		"filter_by": "{filter_by}",
-#		"redact_fields": ["{field_1}", "{field_2}"],
-#		"partial": 1,
-#	},
-#	{
-#		"doctype": "{doctype_2}",
-#		"filter_by": "{filter_by}",
-#		"partial": 1,
-#	},
-#	{
-#		"doctype": "{doctype_3}",
-#		"strict": False,
-#	},
-#	{
-#		"doctype": "{doctype_4}"
-#	}
+#     {
+#         "doctype": "{doctype_1}",
+#         "filter_by": "{filter_by}",
+#         "redact_fields": ["{field_1}", "{field_2}"],
+#         "partial": 1,
+#     },
+#     {
+#         "doctype": "{doctype_2}",
+#         "filter_by": "{filter_by}",
+#         "partial": 1,
+#     },
+#     {
+#         "doctype": "{doctype_3}",
+#         "strict": False,
+#     },
+#     {
+#         "doctype": "{doctype_4}"
+#     }
 # ]
 
 # Authentication and authorization
 # --------------------------------
 
 # auth_hooks = [
-#	"thai_tax.auth.validate"
+#     "thai_tax.auth.validate"
 # ]

@@ -125,23 +125,20 @@ def get_data(filters):
 				addr.city,
 				addr.county,
 				addr.state,
-				addr.pincode
+				addr.pincode,
 			).as_("supplier_address"),
 			round(tinv.tax_base, 2).as_("tax_base"),
 			round(tinv.tax_amount, 2).as_("tax_amount"),
 			tinv.voucher_type.as_("voucher_type"),
 			tinv.voucher_no.as_("voucher_no"),
-			tinv.name.as_("tax_invoice")
+			tinv.name.as_("tax_invoice"),
 		)
 		.where(
-  			(tinv.docstatus == 1)
+			(tinv.docstatus == 1)
 			& (month(tinv.report_date) == filters.get("month"))
 			& (year(tinv.report_date) == filters.get("year"))
-			
 		)
-		.orderby(
-			tinv.report_date
-		)
+		.orderby(tinv.report_date)
 	)
 
 	if filters.get("company_tax_address"):
