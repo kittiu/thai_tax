@@ -55,7 +55,7 @@ class ThaiTaxEmployeeAdvance(EmployeeAdvance):
 
 		# FIX: because python result in 2000.0-1780.2 = 219.79999999999995
 		# if flt(return_amount) > self.paid_amount - self.claimed_amount:
-		if flt(return_amount) > flt(self.paid_amount - self.claimed_amount, 4):
+		if flt(return_amount) > flt(self.paid_amount - self.claimed_amount, 2):
 			frappe.throw(_("Return amount cannot be greater unclaimed amount"))
 
 		self.db_set("paid_amount", paid_amount)
