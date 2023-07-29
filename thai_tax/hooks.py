@@ -210,7 +210,6 @@ doc_events = {
 	},
 	"Payment Entry": {
 		"validate": "thai_tax.custom.custom_api.validate_company_address",
-		"after_insert": "thai_tax.custom.custom_api.clear_invoice_undue_tax",
 		"on_update": "thai_tax.custom.custom_api.clear_invoice_undue_tax",
 	},
 	"Purchase Invoice": {
