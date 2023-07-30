@@ -1,4 +1,8 @@
 frappe.ui.form.on("Journal Entry", {
+	setup(frm) {
+		frm.add_fetch("customer", "customer_name", "party_name");
+		frm.add_fetch("supplier", "supplier_name", "party_name");
+	},
 	refresh(frm) {
 		frm.set_query("company_tax_address", function () {
 			return {
@@ -14,5 +18,35 @@ frappe.ui.form.on("Journal Entry", {
 				},
 			};
 		});
+	},
+});
+
+frappe.ui.form.on("Journal Entry Tax Invoice Detail", {
+	customer(frm, cdt, cdn) {
+		let row = locals[cdt][cdn];
+		if (row.customer) {
+			frappe.model.set_value(cdt, cdn, "supplier", "");
+		}
+	},
+	supplier(frm, cdt, cdn) {
+		let row = locals[cdt][cdn];
+		if (row.supplier) {
+			frappe.model.set_value(cdt, cdn, "customer", "");
+		}
+	},
+});
+
+frappe.ui.form.on("Journal Entry Account", {
+	customer(frm, cdt, cdn) {
+		let row = locals[cdt][cdn];
+		if (row.customer) {
+			frappe.model.set_value(cdt, cdn, "supplier", "");
+		}
+	},
+	supplier(frm, cdt, cdn) {
+		let row = locals[cdt][cdn];
+		if (row.supplier) {
+			frappe.model.set_value(cdt, cdn, "customer", "");
+		}
 	},
 });

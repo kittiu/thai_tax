@@ -73,9 +73,16 @@ def create_tax_invoice(doc, doctype, base_amount, tax_amount, voucher):
 		fields=["party"],
 	)
 	party = gl and gl[0].get("party")
-	# Case use Journal Entry
+	# Case Journal Entry
 	if not party and doc.voucher_type == "Journal Entry":
-		party = voucher.supplier
+		if doctype == "Sales Tax Invoice":
+			if not voucher.customer:
+				frappe.throw(_("Customer is required for Sales Tax Invoice"))
+			party = voucher.customer
+		if doctype == "Purchase Tax Invoice":
+			if not voucher.supplier:
+				frappe.throw(_("Supplier is required for Purchase Tax Invoice"))
+			party = voucher.supplier
 		je = frappe.get_doc(doc.voucher_type, doc.voucher_no)
 		if je.for_payment:
 			tinv_dict.update(
@@ -348,8 +355,11 @@ def get_uncleared_tax_amount(gl, payment_type):
 	return uncleared_tax
 
 
-def is_tax_reset(doc, old_doc, tax_accounts):
+def is_tax_reset(doc, tax_accounts):
 	# For new doc, or has tax changes, do the reset
+	if doc.docstatus != 0:
+		return False
+	old_doc = doc.get_doc_before_save()
 	if old_doc:
 		old_tax_lines = list(filter(lambda l: l.account in tax_accounts, old_doc.accounts))
 		new_tax_lines = list(filter(lambda l: l.account in tax_accounts, doc.accounts))
@@ -363,6 +373,10 @@ def is_tax_reset(doc, old_doc, tax_accounts):
 					old_line.tax_base_amount != new_line.tax_base_amount
 					or old_line.debit != new_line.debit
 					or old_line.credit != new_line.credit
+					or old_line.supplier != new_line.supplier
+					or old_line.customer != new_line.customer
+					or old_line.tax_invoice_number != new_line.tax_invoice_number
+					or str(old_line.tax_invoice_date) != str(new_line.tax_invoice_date)
 				):
 					return True
 	else:
@@ -376,11 +390,11 @@ def prepare_journal_entry_tax_invoice_detail(doc, method):
 	precision = get_field_precision(
 		frappe.get_meta("Journal Entry Tax Invoice Detail").get_field("tax_base_amount")
 	)
-	old_doc = doc.get_doc_before_save()
-	reset_tax = is_tax_reset(doc, old_doc, tax_accounts)
+	# Reset Tax Invoice Table
+	reset_tax = is_tax_reset(doc, tax_accounts)
 	if reset_tax:
-		for tax_invoice in doc.tax_invoice_details:
-			tax_invoice.delete()
+		for d in doc.tax_invoice_details:
+			d.delete()
 		for tax_line in filter(lambda l: l.account in tax_accounts, doc.accounts):
 			tax_rate = frappe.get_cached_value("Account", tax_line.account, "tax_rate")
 			tax_amount = abs(tax_line.debit - tax_line.credit)
@@ -391,6 +405,11 @@ def prepare_journal_entry_tax_invoice_detail(doc, method):
 			if not company_tax_address:
 				addrs = frappe.get_all("Address", {"is_your_company_address": 1}, pluck="name")
 				company_tax_address = len(addrs) == 1 and addrs[0] or ""
+			party_name = ""
+			if tax_line.customer:
+				party_name = frappe.get_doc("Customer", tax_line.customer).customer_name
+			if tax_line.supplier:
+				party_name = frappe.get_doc("Supplier", tax_line.supplier).supplier_name
 			tinv_detail = frappe.get_doc(
 				{
 					"doctype": "Journal Entry Tax Invoice Detail",
@@ -398,6 +417,11 @@ def prepare_journal_entry_tax_invoice_detail(doc, method):
 					"parentfield": "tax_invoice_details",
 					"parent": doc.name,
 					"company_tax_address": company_tax_address,
+					"supplier": tax_line.supplier,
+					"customer": tax_line.customer,
+					"party_name": party_name,
+					"tax_invoice_number": tax_line.tax_invoice_number,
+					"tax_invoice_date": tax_line.tax_invoice_date,
 					"tax_base_amount": flt(tax_base_amount, precision),
 					"tax_amount": flt(tax_amount, precision),
 				}
