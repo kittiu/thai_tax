@@ -1,0 +1,74 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-07-30 10:00:38.519032",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "company_tax_address",
+  "supplier",
+  "tax_invoice_number",
+  "tax_invoice_date",
+  "tax_base_amount",
+  "tax_amount"
+ ],
+ "fields": [
+  {
+   "fieldname": "company_tax_address",
+   "fieldtype": "Link",
+   "label": "Company Tax Address",
+   "options": "Address"
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Supplier",
+   "options": "Supplier"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "tax_invoice_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Tax Invoice Number"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "tax_invoice_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Tax Invoice Date"
+  },
+  {
+   "fieldname": "tax_base_amount",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Tax Base Amount",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "tax_amount",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Tax Amount",
+   "precision": "2",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2023-07-30 13:53:14.465463",
+ "modified_by": "Administrator",
+ "module": "Thai Tax",
+ "name": "Journal Entry Tax Invoice Detail",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
