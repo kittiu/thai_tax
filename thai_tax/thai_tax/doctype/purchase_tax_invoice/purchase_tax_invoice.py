@@ -14,6 +14,11 @@ class PurchaseTaxInvoice(Document):
 			self.compute_report_date()
 			if self.voucher_type and self.voucher_no:
 				origin_doc = frappe.get_doc(self.voucher_type, self.voucher_no)
+				if self.voucher_type == "Journal Entry":
+					gl = frappe.get_doc("GL Entry", self.gl_entry)
+					origin_doc = frappe.get_doc(
+						"Journal Entry Tax Invoice Detail", gl.voucher_detail_no
+					)
 				origin_doc.tax_invoice_number = self.number
 				origin_doc.tax_invoice_date = self.date
 				origin_doc.save(ignore_permissions=True)

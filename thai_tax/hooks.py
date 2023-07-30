@@ -28,12 +28,13 @@ fixtures = [
 					"Expense Claim-section_break_uodhb",
 					"Expense Claim-company_tax_address",
 					"Expense Claim-tax_invoice",
-					"Journal Entry-tax_invoice_date",
-					"Journal Entry-column_break_1ds9m",
-					"Journal Entry-tax_invoice_number",
-					"Journal Entry-section_break_hjndu",
-					"Journal Entry-company_tax_address",
 					"Journal Entry-tax_invoice",
+					"Journal Entry-company_tax_address",
+					"Journal Entry-column_break_3djv9",
+					"Journal Entry-for_payment",
+					"Journal Entry-section_break_pxm0e",
+					"Journal Entry-tax_invoice_details",
+					"Journal Entry Account-tax_base_amount",
 					"Payment Entry-tax_invoice_date",
 					"Payment Entry-tax_invoice_number",
 					"Payment Entry-company_tax_address",
@@ -50,11 +51,6 @@ fixtures = [
 					"Advance Taxes and Charges-rate-precision",
 					"Purchase Taxes and Charges-rate-precision",
 					"Sales Taxes and Charges-rate-precision",
-					"Journal Entry-column_break_3djv9",
-					"Journal Entry-for_payment",
-					"Journal Entry-supplier_name",
-					"Journal Entry-supplier",
-					"Journal Entry-tax_base_amount",
 					"Expense Claim-column_break_rqacr",
 					"Expense Claim-base_amount_overwrite",
 					"Payment Entry-column_break_bqyze",
@@ -219,6 +215,9 @@ doc_events = {
 	"Expense Claim": {
 		"after_insert": "thai_tax.custom.custom_api.validate_tax_invoice",
 		"on_update": "thai_tax.custom.custom_api.validate_tax_invoice",
+	},
+	"Journal Entry": {
+		"on_update": "thai_tax.custom.custom_api.prepare_journal_entry_tax_invoice_detail"
 	},
 }
 

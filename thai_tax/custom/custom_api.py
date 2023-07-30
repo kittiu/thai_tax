@@ -4,88 +4,13 @@ from ast import literal_eval
 import frappe
 import urllib3
 from frappe import _
+from frappe.model.meta import get_field_precision
+from frappe.utils import flt
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 def create_tax_invoice_on_gl_tax(doc, method):
-	def create_tax_invoice(doc, doctype, base_amount, tax_amount, voucher):
-		tinv_dict = {}
-		# For sales invoice / purchase invoice / payment and journal entry, we can get the party from GL
-		gl = frappe.db.get_all(
-			"GL Entry",
-			filters={
-				"voucher_type": doc.voucher_type,
-				"voucher_no": doc.voucher_no,
-				"party": ["!=", ""],
-			},
-			fields=["party"],
-		)
-		party = gl and gl[0].get("party")
-		# Case use Journal Entry
-		if not party and doc.voucher_type == "Journal Entry":
-			je = frappe.get_doc(doc.voucher_type, doc.voucher_no)
-			party = je.supplier
-			if je.for_payment:
-				tinv_dict.update(
-					{
-						"against_voucher_type": "Payment Entry",
-						"against_voucher": je.for_payment,
-					}
-				)
-		# Case Payment Entry, party must be of type customer/supplier only
-		if doc.voucher_type == "Payment Entry" and doc.party_type == "Employee":
-			party = voucher.supplier
-		# Case expense claim, partner should be supplier, not employee
-		if doc.voucher_type == "Expense Claim":
-			party = voucher.supplier
-		if not party:
-			frappe.throw(_("Please fill in Supplier for Purchase Tax Invoice"))
-		# Create Tax Invoice
-		tinv_dict.update(
-			{
-				"doctype": doctype,
-				"gl_entry": doc.name,
-				"tax_amount": tax_amount,
-				"tax_base": base_amount,
-				"party": party,
-			}
-		)
-		tinv = frappe.get_doc(tinv_dict)
-		tinv.insert(ignore_permissions=True)
-		return tinv
-
-	def update_voucher_tinv(doctype, voucher, tinv):
-		# Set company tax address
-		def update_company_tax_address(voucher, tinv):
-			# From Sales Invoice and Purchase Invoice, use voucher address
-			if tinv.voucher_type == "Sales Invoice":
-				tinv.company_tax_address = voucher.company_address
-			elif tinv.voucher_type == "Purchase Invoice":
-				tinv.company_tax_address = voucher.billing_address
-			else:  # From Payment Entry, Expense Claim and Journal Entry
-				tinv.company_tax_address = voucher.company_tax_address
-			if not tinv.company_tax_address:
-				frappe.throw(_("No Company Billing/Tax Address"))
-
-		update_company_tax_address(voucher, tinv)
-
-		# Sales Invoice - use Sales Tax Invoice as Tax Invoice
-		# Purchase Invoice - use Bill No as Tax Invoice
-		if doctype == "Sales Tax Invoice":
-			voucher.tax_invoice_number = tinv.name
-			voucher.tax_invoice_date = tinv.date
-			tinv.report_date = tinv.date
-		if doctype == "Purchase Tax Invoice":
-			if not (voucher.tax_invoice_number and voucher.tax_invoice_date):
-				frappe.throw(_("Please enter Tax Invoice Number / Tax Invoice Date"))
-			voucher.save()
-			tinv.number = voucher.tax_invoice_number
-			tinv.report_date = tinv.date = voucher.tax_invoice_date
-		voucher.save()
-		tinv.save()
-		return tinv
-
 	# Auto create Tax Invoice only when account equal to tax account.
 	setting = frappe.get_doc("Tax Invoice Settings")
 	doctype = False
@@ -104,7 +29,6 @@ def create_tax_invoice_on_gl_tax(doc, method):
 			doctype = "Purchase Tax Invoice"
 		tax_amount = abs(tax_amount) * sign
 	if doctype:
-		voucher = frappe.get_doc(doc.voucher_type, doc.voucher_no)
 		if voucher.docstatus == 2:
 			tax_amount = 0
 		if tax_amount != 0:
@@ -116,6 +40,8 @@ def create_tax_invoice_on_gl_tax(doc, method):
 			elif voucher.doctype == "Payment Entry":
 				base_amount = voucher.tax_base_amount
 			elif voucher.doctype == "Journal Entry":
+				# For Journal Entry, use Tax Invoice Detail table as voucher
+				voucher = frappe.get_doc("Journal Entry Tax Invoice Detail", doc.voucher_detail_no)
 				base_amount = voucher.tax_base_amount
 			base_amount = abs(base_amount) * sign
 			# Validate base amount
@@ -132,6 +58,85 @@ def create_tax_invoice_on_gl_tax(doc, method):
 			tinv = create_tax_invoice(doc, doctype, base_amount, tax_amount, voucher)
 			tinv = update_voucher_tinv(doctype, voucher, tinv)
 			tinv.submit()
+
+
+def create_tax_invoice(doc, doctype, base_amount, tax_amount, voucher):
+	tinv_dict = {}
+	# For sales invoice / purchase invoice / payment and journal entry, we can get the party from GL
+	gl = frappe.db.get_all(
+		"GL Entry",
+		filters={
+			"voucher_type": doc.voucher_type,
+			"voucher_no": doc.voucher_no,
+			"party": ["!=", ""],
+		},
+		fields=["party"],
+	)
+	party = gl and gl[0].get("party")
+	# Case use Journal Entry
+	if not party and doc.voucher_type == "Journal Entry":
+		party = voucher.supplier
+		je = frappe.get_doc(doc.voucher_type, doc.voucher_no)
+		if je.for_payment:
+			tinv_dict.update(
+				{
+					"against_voucher_type": "Payment Entry",
+					"against_voucher": je.for_payment,
+				}
+			)
+	# Case Payment Entry, party must be of type customer/supplier only
+	if doc.voucher_type == "Payment Entry" and doc.party_type == "Employee":
+		party = voucher.supplier
+	# Case expense claim, partner should be supplier, not employee
+	if doc.voucher_type == "Expense Claim":
+		party = voucher.supplier
+	if not party:
+		frappe.throw(_("Please fill in Supplier for Purchase Tax Invoice"))
+	# Create Tax Invoice
+	tinv_dict.update(
+		{
+			"doctype": doctype,
+			"gl_entry": doc.name,
+			"tax_amount": tax_amount,
+			"tax_base": base_amount,
+			"party": party,
+		}
+	)
+	tinv = frappe.get_doc(tinv_dict)
+	tinv.insert(ignore_permissions=True)
+	return tinv
+
+
+def update_voucher_tinv(doctype, voucher, tinv):
+	# Set company tax address
+	def update_company_tax_address(voucher, tinv):
+		# From Sales Invoice and Purchase Invoice, use voucher address
+		if tinv.voucher_type == "Sales Invoice":
+			tinv.company_tax_address = voucher.company_address
+		elif tinv.voucher_type == "Purchase Invoice":
+			tinv.company_tax_address = voucher.billing_address
+		else:  # From Payment Entry, Expense Claim and Journal Entry
+			tinv.company_tax_address = voucher.company_tax_address
+		if not tinv.company_tax_address:
+			frappe.throw(_("No Company Billing/Tax Address"))
+
+	update_company_tax_address(voucher, tinv)
+
+	# Sales Invoice - use Sales Tax Invoice as Tax Invoice
+	# Purchase Invoice - use Bill No as Tax Invoice
+	if doctype == "Sales Tax Invoice":
+		voucher.tax_invoice_number = tinv.name
+		voucher.tax_invoice_date = tinv.date
+		tinv.report_date = tinv.date
+	if doctype == "Purchase Tax Invoice":
+		if not (voucher.tax_invoice_number and voucher.tax_invoice_date):
+			frappe.throw(_("Please enter Tax Invoice Number / Tax Invoice Date"))
+		voucher.save()
+		tinv.number = voucher.tax_invoice_number
+		tinv.report_date = tinv.date = voucher.tax_invoice_date
+	voucher.save()
+	tinv.save()
+	return tinv
 
 
 def validate_company_address(doc, method):
@@ -211,6 +216,7 @@ def make_clear_vat_journal_entry(dt, dn):
 						"account": account_undue,
 						"credit_in_account_currency": undue_tax > 0 and undue_tax,
 						"debit_in_account_currency": undue_tax < 0 and abs(undue_tax),
+						"tax_base_amount": base_total,
 					},
 				)
 				tax_total += undue_tax
@@ -225,8 +231,6 @@ def make_clear_vat_journal_entry(dt, dn):
 			"debit_in_account_currency": tax_total > 0 and tax_total,
 		},
 	)
-	# Base amount
-	je.tax_base_amount = base_total
 	return je
 
 
@@ -342,6 +346,65 @@ def get_uncleared_tax_amount(gl, payment_type):
 	if payment_type == "Receive":
 		uncleared_tax = -uncleared_tax
 	return uncleared_tax
+
+
+def is_tax_reset(doc, old_doc, tax_accounts):
+	# For new doc, or has tax changes, do the reset
+	if old_doc:
+		old_tax_lines = list(filter(lambda l: l.account in tax_accounts, old_doc.accounts))
+		new_tax_lines = list(filter(lambda l: l.account in tax_accounts, doc.accounts))
+		if len(old_tax_lines) != len(new_tax_lines):
+			return True
+		else:
+			for tax_line in list(zip(old_tax_lines, new_tax_lines)):
+				old_line = tax_line[0]
+				new_line = tax_line[1]
+				if (
+					old_line.tax_base_amount != new_line.tax_base_amount
+					or old_line.debit != new_line.debit
+					or old_line.credit != new_line.credit
+				):
+					return True
+	else:
+		return True
+	return False
+
+
+def prepare_journal_entry_tax_invoice_detail(doc, method):
+	setting = frappe.get_doc("Tax Invoice Settings")
+	tax_accounts = [setting.sales_tax_account, setting.purchase_tax_account]
+	precision = get_field_precision(
+		frappe.get_meta("Journal Entry Tax Invoice Detail").get_field("tax_base_amount")
+	)
+	old_doc = doc.get_doc_before_save()
+	reset_tax = is_tax_reset(doc, old_doc, tax_accounts)
+	if reset_tax:
+		for tax_invoice in doc.tax_invoice_details:
+			tax_invoice.delete()
+		for tax_line in filter(lambda l: l.account in tax_accounts, doc.accounts):
+			tax_rate = frappe.get_cached_value("Account", tax_line.account, "tax_rate")
+			tax_amount = abs(tax_line.debit - tax_line.credit)
+			tax_base_amount = tax_line.tax_base_amount or (
+				tax_rate > 0 and tax_amount * 100 / tax_rate or 0
+			)
+			company_tax_address = doc.company_tax_address
+			if not company_tax_address:
+				addrs = frappe.get_all("Address", {"is_your_company_address": 1}, pluck="name")
+				company_tax_address = len(addrs) == 1 and addrs[0] or ""
+			tinv_detail = frappe.get_doc(
+				{
+					"doctype": "Journal Entry Tax Invoice Detail",
+					"parenttype": "Journal Entry",
+					"parentfield": "tax_invoice_details",
+					"parent": doc.name,
+					"company_tax_address": company_tax_address,
+					"tax_base_amount": flt(tax_base_amount, precision),
+					"tax_amount": flt(tax_amount, precision),
+				}
+			)
+			tax_line.reference_detail_no = tinv_detail.insert().name
+			tax_line.save()
+		doc.reload()
 
 
 @frappe.whitelist()

@@ -7,5 +7,12 @@ frappe.ui.form.on("Journal Entry", {
 				},
 			};
 		});
+		frm.set_query("company_tax_address", "tax_invoice_details", () => {
+			return {
+				filters: {
+					is_your_company_address: true,
+				},
+			};
+		});
 	},
 });
