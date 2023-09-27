@@ -3,7 +3,7 @@
 Additional tax functionality to comply with Thailand Tax regulation.
 
 ### 1. Tax Point on both Invoice and Payment
-    
+
 Tax Point determine when tax is recorded in general ledger. And on tax point, with Sales Tax Invoice or Purchase Tax Invoice will be created.
 
 Trading of stockable product, tax point occur when deliver product and invoice is issued. The selling party will issue out document called "Delivery Note / Tax Invoice". And so Tax Invoice doctype got created when submit sales/purchase invoice.
@@ -14,8 +14,8 @@ For service, tax point occur when service is done and payment is made. When subm
 
 When a company purchase service from a supplier, when making payment, it is responsible to withhold (deduct) a tax amount (i.e., 3%) of invoice amount and issue out the Withholding Tax Certificate (pdf) to supplier.
 
-### 3. Reports that require for submission to RD, for example,
-    
+### 3. Reports that require for submission to RD,
+
 - Purchase Tax Report, Sales Tax Report
 - Withholding Tax Report (PND or ภงด)
 
