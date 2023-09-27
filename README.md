@@ -14,7 +14,7 @@ For service, tax point occur when service is done and payment is made. When subm
 
 When a company purchase service from a supplier, when making payment, it is responsible to withhold (deduct) a tax amount (i.e., 3%) of invoice amount and issue out the Withholding Tax Certificate (pdf) to supplier.
 
-### 3. Reports that require for submission to RD, i.e.,
+### 3. Reports that require for submission to RD, for example,
     
 - Purchase Tax Report, Sales Tax Report
 - Withholding Tax Report (PND or ภงด)
