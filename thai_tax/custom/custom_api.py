@@ -465,7 +465,11 @@ def get_withholding_tax(filters, doc):
 	wht = frappe.get_doc("Withholding Tax Type", filters["wht_type"])
 	company = frappe.get_doc("Company", pay["company"])
 	for ref in pay.get("references"):
-		if ref.get("reference_doctype") not in ["Purchase Invoice", "Expense Claim"]:
+		if ref.get("reference_doctype") not in [
+				"Purchase Invoice",
+				"Expense Claim",
+				"Journal Entry"
+			]:
 			return
 		if not ref.get("allocated_amount") or not ref.get("total_amount"):
 			continue
