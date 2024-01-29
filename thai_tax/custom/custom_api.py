@@ -19,6 +19,8 @@ def create_tax_invoice_on_gl_tax(doc, method):
 	is_return = False
 	if doc.voucher_type in ["Sales Invoice", "Purchase Invoice"]:
 		is_return = voucher.is_return  # Case Debit/Credit Note
+	if doc.voucher_type == "Journal Entry":
+		is_return = voucher.reversal_of and True or False
 	sign = is_return and -1 or 1
 	# Tax amount, use Dr/Cr to ensure it support every case
 	if doc.account in [setting.sales_tax_account, setting.purchase_tax_account]:
@@ -70,19 +72,19 @@ def create_tax_invoice(doc, doctype, base_amount, tax_amount, voucher):
 			"voucher_no": doc.voucher_no,
 			"party": ["!=", ""],
 		},
-		fields=["party"],
+		fields=["party", "party_type"],
 	)
 	party = gl and gl[0].get("party")
-	# Case Journal Entry
-	if not party and doc.voucher_type == "Journal Entry":
+	party_type = gl and gl[0].get("party_type")
+	if doc.voucher_type == "Journal Entry":
 		if doctype == "Sales Tax Invoice":
-			if not voucher.customer:
+			party = voucher.customer or party
+			if not party:
 				frappe.throw(_("Customer is required for Sales Tax Invoice"))
-			party = voucher.customer
 		if doctype == "Purchase Tax Invoice":
-			if not voucher.supplier:
+			party = voucher.supplier or party
+			if not party:
 				frappe.throw(_("Supplier is required for Purchase Tax Invoice"))
-			party = voucher.supplier
 		je = frappe.get_doc(doc.voucher_type, doc.voucher_no)
 		if je.for_payment:
 			tinv_dict.update(
