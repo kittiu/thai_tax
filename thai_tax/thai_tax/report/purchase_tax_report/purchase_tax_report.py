@@ -133,13 +133,17 @@ def get_data(filters):
 			tinv.voucher_no.as_("voucher_no"),
 			tinv.name.as_("tax_invoice"),
 		)
-		.where(
-			(tinv.docstatus == 1)
-			& (month(tinv.report_date) == filters.get("month"))
-			& (year(tinv.report_date) == filters.get("year"))
-		)
+		.where(tinv.docstatus == 1)
 		.orderby(tinv.report_date)
 	)
+
+	if filters.get("filter_based_on") == "Fiscal Year":
+		query = query.where(month(tinv.report_date) == filters.get("month"))
+		query = query.where(year(tinv.report_date) == filters.get("year"))
+
+	if filters.get("filter_based_on") == "Date Range":
+		query = query.where(tinv.report_date >= filters.get("start_date"))
+		query = query.where(tinv.report_date <= filters.get("end_date"))
 
 	if filters.get("company_tax_address"):
 		query = query.where(tinv.company_tax_address == filters.get("company_tax_address"))
