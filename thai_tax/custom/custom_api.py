@@ -466,6 +466,7 @@ def get_withholding_tax(filters, doc):
 	pay = json.loads(doc)
 	wht = frappe.get_doc("Withholding Tax Type", filters["wht_type"])
 	company = frappe.get_doc("Company", pay["company"])
+	base_amount = 0
 	for ref in pay.get("references"):
 		if ref.get("reference_doctype") not in [
 				"Purchase Invoice",
@@ -489,7 +490,6 @@ def get_withholding_tax(filters, doc):
 				"credit",
 			],
 		)
-		base_amount = 0
 		for gl in gl_entries:
 			credit = gl["credit"]
 			debit = gl["debit"]
