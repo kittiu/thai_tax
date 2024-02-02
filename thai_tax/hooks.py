@@ -64,6 +64,10 @@ fixtures = [
 					"Payment Entry-has_purchase_tax_invoice",
 					"Payment Entry-supplier",
 					"Payment Entry-supplier_name",
+                    "Supplier-custom_wht",
+                    "Supplier-custom_default_income_tax_form",
+                    "Supplier-custom_column_break_7q1md",
+                    "Payment Entry-custom_wht_type",
 				),
 			]
 		],

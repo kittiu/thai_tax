@@ -15,13 +15,19 @@ frappe.ui.form.on("Payment Entry", {
 			frm.doc.payment_type == "Pay" &&
 			frm.doc.deductions.length > 0
 		) {
-			frm.add_custom_button(__("Create Withholding Tax Cert"), function () {
+			frm.add_custom_button(__("Create Withholding Tax Cert"), async function () {
+				let income_tax_form = (
+					await frappe.db.get_value(
+						frm.doc.party_type, frm.doc.party, "custom_default_income_tax_form"
+					)
+				).message.custom_default_income_tax_form;
 				const fields = [
 					{
 						fieldtype: "Link",
 						label: __("WHT Type"),
 						fieldname: "wht_type",
 						options: "Withholding Tax Type",
+						default: frm.doc.custom_wht_type,
 						reqd: 1,
 					},
 					{
@@ -35,6 +41,7 @@ frappe.ui.form.on("Payment Entry", {
 						label: __("Income Tax Form"),
 						fieldname: "income_tax_form",
 						options: "PND3\nPND53",
+						default: income_tax_form
 					},
 					{
 						fieldtype: "Link",
@@ -97,6 +104,7 @@ frappe.ui.form.on("Payment Entry", {
 			fields,
 			function (filters) {
 				frm.events.add_withholding_tax_deduction(frm, filters);
+				frm.doc.custom_wht_type = filters.wht_type
 			},
 			__("Deduct Withholding Tax"),
 			__("Add Withholding Tax Deduction")
