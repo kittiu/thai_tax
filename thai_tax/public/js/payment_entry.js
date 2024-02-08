@@ -16,11 +16,14 @@ frappe.ui.form.on("Payment Entry", {
 			frm.doc.deductions.length > 0
 		) {
 			frm.add_custom_button(__("Create Withholding Tax Cert"), async function () {
-				let income_tax_form = (
-					await frappe.db.get_value(
-						frm.doc.party_type, frm.doc.party, "custom_default_income_tax_form"
-					)
-				).message.custom_default_income_tax_form;
+				let income_tax_form = "";
+				if (frm.doc.party_type == "Supplier") {
+					income_tax_form = (
+						await frappe.db.get_value(
+							frm.doc.party_type, frm.doc.party, "custom_default_income_tax_form"
+						)
+					).message.custom_default_income_tax_form;
+				}
 				const fields = [
 					{
 						fieldtype: "Link",
