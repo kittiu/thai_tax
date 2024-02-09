@@ -1,10 +1,12 @@
 frappe.ui.form.on("Withholding Tax Cert", {
 	refresh(frm) {
-		frm.set_query("company_address", function () {
+		frm.set_query("company_address", function (doc) {
 			return {
+				query: "frappe.contacts.doctype.address.address.address_query",
 				filters: {
-					is_your_company_address: 1,
-				},
+					link_doctype: "Company",
+					link_name: doc.company
+				}
 			};
 		});
 		frm.set_query("voucher_type", function () {
