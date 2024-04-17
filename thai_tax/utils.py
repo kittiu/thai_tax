@@ -74,7 +74,7 @@ def finalize_address_dict(data):
 	postal = data.get("vPostCode", "")
 
 	if province == "จ.กรุงเทพมหานคร":
-		thambon = data.get("vThambol") and "แขวง%s" % data["vAmphur"] or ""
+		thambon = data.get("vThambol") and "แขวง%s" % data["vThambol"] or ""
 		amphur = data.get("vAmphur") and "เขต%s" % data["vAmphur"] or ""
 		province = data.get("vProvince") and "%s" % data["vProvince"] or ""
 
