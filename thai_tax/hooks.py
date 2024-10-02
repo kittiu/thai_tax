@@ -157,7 +157,8 @@ doctype_js = {
 
 jinja = {
 	"methods": [
-		"thai_tax.utils.amount_in_bahttext",
+        "thai_tax.utils.amount_in_bahttext",
+        "thai_tax.utils.full_thai_date",
 	],
 }
 

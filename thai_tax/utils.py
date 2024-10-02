@@ -5,10 +5,18 @@ from num2words import num2words
 from requests import Session
 from zeep import Client
 from zeep.transports import Transport
+import datetime
 
 
 def amount_in_bahttext(amount):
 	return num2words(amount, to="currency", lang="th")
+
+
+def full_thai_date(date_str):
+    date = datetime.datetime.strptime(date_str, '%Y-%m-%d')
+    month_name = "x มกราคม กุมภาพันธ์ มีนาคม เมษายน พฤษภาคม มิถุนายน กรกฎาคม สิงหาคม กันยายน ตุลาคม พฤศจิกายน ธันวาคม".split()[date.month]
+    thai_year = date.year + 543
+    return "%d %s %d" % (date.day, month_name, thai_year) # 30 ตุลาคม 2560
 
 
 @frappe.whitelist()
