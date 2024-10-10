@@ -18,6 +18,7 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Title",
+   "mandatory_depends_on": "eval:doc.title == 'Auto'",
    "reqd": 1,
    "unique": 1
   },
@@ -40,7 +41,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-05-30 10:21:30.807340",
+ "modified": "2024-10-10 15:27:17.778852",
  "modified_by": "Administrator",
  "module": "Thai Tax",
  "name": "Withholding Tax Type",
