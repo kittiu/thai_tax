@@ -178,10 +178,21 @@ def validate_tax_invoice(doc, method):
 
 @frappe.whitelist()
 def to_clear_undue_tax(dt, dn):
-	to_clear = True
+	if is_tax_invoice_exists(dt, dn):
+		return False
 	if not make_clear_vat_journal_entry(dt, dn):
-		to_clear = False
-	return to_clear
+		return False
+	return True
+
+
+def is_tax_invoice_exists(dt, dn):
+	doc = frappe.get_doc(dt, dn)
+	ptax = frappe.get_all(
+		"Purchase Tax Invoice",
+		or_filters={"voucher_no": doc.name,"against_voucher":  doc.name},
+		pluck="name"
+	)
+	return True if ptax else False
 
 
 @frappe.whitelist()
