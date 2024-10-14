@@ -105,8 +105,7 @@ def get_data(filters):
 			tinv.voucher_type.as_("voucher_type"),
 			tinv.voucher_no.as_("voucher_no"),
 		)
-		.where(tinv.docstatus.isin([1, 2])
-		)
+		.where(tinv.docstatus.isin([1, 2]))
 		.orderby(tinv.name)
 	)
 

@@ -178,10 +178,21 @@ def validate_tax_invoice(doc, method):
 
 @frappe.whitelist()
 def to_clear_undue_tax(dt, dn):
-	to_clear = True
+	if is_tax_invoice_exists(dt, dn):
+		return False
 	if not make_clear_vat_journal_entry(dt, dn):
-		to_clear = False
-	return to_clear
+		return False
+	return True
+
+
+def is_tax_invoice_exists(dt, dn):
+	doc = frappe.get_doc(dt, dn)
+	ptax = frappe.get_all(
+		"Purchase Tax Invoice",
+		or_filters={"voucher_no": doc.name,"against_voucher":  doc.name},
+		pluck="name"
+	)
+	return True if ptax else False
 
 
 @frappe.whitelist()
@@ -431,76 +442,3 @@ def prepare_journal_entry_tax_invoice_detail(doc, method):
 			tax_line.reference_detail_no = tinv_detail.insert().name
 			tax_line.save()
 		doc.reload()
-
-
-@frappe.whitelist()
-def make_withholding_tax_cert(filters, doc):
-	wht = get_withholding_tax(filters, doc)
-	filters = literal_eval(filters)
-	pay = json.loads(doc)
-	cert = frappe.new_doc("Withholding Tax Cert")
-	cert.supplier = pay.get("party_type") == "Supplier" and pay.get("party") or ""
-	if cert.supplier != "":
-		supplier = frappe.get_doc("Supplier", cert.supplier)
-		cert.supplier_name = supplier and supplier.supplier_name or ""
-		cert.supplier_address = supplier and supplier.supplier_primary_address or ""
-	cert.voucher_type = "Payment Entry"
-	cert.voucher_no = pay.get("name")
-	cert.company_address = filters.get("company_address")
-	cert.income_tax_form = filters.get("income_tax_form")
-	cert.date = filters.get("date")
-	cert.append(
-		"withholding_tax_items",
-		{
-			"tax_base": -wht["base"],
-			"tax_rate": wht["rate"],
-			"tax_amount": -wht["amount"],
-		},
-	)
-	return cert
-
-
-@frappe.whitelist()
-def get_withholding_tax(filters, doc):
-	filters = literal_eval(filters)
-	pay = json.loads(doc)
-	wht = frappe.get_doc("Withholding Tax Type", filters["wht_type"])
-	company = frappe.get_doc("Company", pay["company"])
-	base_amount = 0
-	for ref in pay.get("references"):
-		if ref.get("reference_doctype") not in [
-				"Purchase Invoice",
-				"Expense Claim",
-				"Journal Entry"
-			]:
-			return
-		if not ref.get("allocated_amount") or not ref.get("total_amount"):
-			continue
-		# Find gl entry of ref doc that has undue amount
-		gl_entries = frappe.db.get_all(
-			"GL Entry",
-			filters={
-				"voucher_type": ref["reference_doctype"],
-				"voucher_no": ref["reference_name"],
-			},
-			fields=[
-				"name",
-				"account",
-				"debit",
-				"credit",
-			],
-		)
-		for gl in gl_entries:
-			credit = gl["credit"]
-			debit = gl["debit"]
-			alloc_percent = ref["allocated_amount"] / ref["total_amount"]
-			report_type = frappe.get_cached_value("Account", gl["account"], "report_type")
-			if report_type == "Profit and Loss":
-				base_amount += alloc_percent * (credit - debit)
-	return {
-		"account": wht.account,
-		"cost_center": company.cost_center,
-		"base": base_amount,
-		"rate": wht.percent,
-		"amount": wht.percent / 100 * base_amount,
-	}

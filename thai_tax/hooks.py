@@ -64,10 +64,16 @@ fixtures = [
 					"Payment Entry-has_purchase_tax_invoice",
 					"Payment Entry-supplier",
 					"Payment Entry-supplier_name",
-                    "Supplier-custom_wht",
-                    "Supplier-custom_default_income_tax_form",
-                    "Supplier-custom_column_break_7q1md",
-                    "Payment Entry-custom_wht_type",
+					"Supplier-custom_wht",
+					"Supplier-custom_default_income_tax_form",
+					"Supplier-custom_column_break_7q1md",
+					"Item-custom_section_break_6buh1",
+					"Item-custom_withholding_tax_type",
+					"Purchase Invoice Item-custom_withholding_tax_type",
+					"Payment Entry Deduction-custom_section_break_s4fwa",
+					"Payment Entry Deduction-custom_column_break_lx8hk",
+					"Payment Entry Deduction-custom_withholding_tax_base",
+					"Payment Entry Deduction-custom_withholding_tax_type",
 				),
 			]
 		],
@@ -87,6 +93,18 @@ fixtures = [
 			]
 		],
 	},
+	# {
+	# 	"doctype": "Withholding Tax Type",
+	# 	"filters": [
+	# 		[
+	# 			"name",
+	# 			"in",
+	# 			(
+	# 				"Auto",
+	# 			),
+	# 		]
+	# 	],
+	# },
 ]
 
 
@@ -157,8 +175,8 @@ doctype_js = {
 
 jinja = {
 	"methods": [
-        "thai_tax.utils.amount_in_bahttext",
-        "thai_tax.utils.full_thai_date",
+		"thai_tax.utils.amount_in_bahttext",
+		"thai_tax.utils.full_thai_date",
 	],
 }
 

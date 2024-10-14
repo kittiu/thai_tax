@@ -1,3 +1,5 @@
+import datetime
+
 import frappe
 import zeep
 from frappe import _
@@ -5,7 +7,6 @@ from num2words import num2words
 from requests import Session
 from zeep import Client
 from zeep.transports import Transport
-import datetime
 
 
 def amount_in_bahttext(amount):
@@ -15,10 +16,12 @@ def amount_in_bahttext(amount):
 def full_thai_date(date_str):
 	if not date_str:
 		return ""
-	date = datetime.datetime.strptime(str(date_str), '%Y-%m-%d')
-	month_name = "x มกราคม กุมภาพันธ์ มีนาคม เมษายน พฤษภาคม มิถุนายน กรกฎาคม สิงหาคม กันยายน ตุลาคม พฤศจิกายน ธันวาคม".split()[date.month]
+	date = datetime.datetime.strptime(str(date_str), "%Y-%m-%d")
+	month_name = "x มกราคม กุมภาพันธ์ มีนาคม เมษายน พฤษภาคม มิถุนายน กรกฎาคม สิงหาคม กันยายน ตุลาคม พฤศจิกายน ธันวาคม".split()[
+		date.month
+	]
 	thai_year = date.year + 543
-	return "%d %s %d" % (date.day, month_name, thai_year) # 30 ตุลาคม 2560
+	return "%d %s %d" % (date.day, month_name, thai_year)  # 30 ตุลาคม 2560
 
 
 @frappe.whitelist()
