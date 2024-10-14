@@ -11,6 +11,8 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 def create_tax_invoice_on_gl_tax(doc, method):
+	if doc.flags.from_repost:
+		return
 	# Auto create Tax Invoice only when account equal to tax account.
 	setting = frappe.get_doc("Tax Invoice Settings")
 	doctype = False
