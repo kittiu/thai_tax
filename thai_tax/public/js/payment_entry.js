@@ -224,7 +224,7 @@ frappe.ui.form.on("Payment Entry", {
 
 	make_withholding_tax_cert: function (frm, filters) {
 		return frappe.call({
-			method: "thai_tax.custom.payroll_entry.make_withholding_tax_cert",
+			method: "thai_tax.custom.payment_entry.make_withholding_tax_cert",
 			args: {
 				filters: filters,
 				doc: frm.doc,
