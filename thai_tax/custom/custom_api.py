@@ -1,6 +1,3 @@
-import json
-from ast import literal_eval
-
 import frappe
 import urllib3
 from frappe import _
