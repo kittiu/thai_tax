@@ -177,7 +177,7 @@ frappe.ui.form.on("Payment Entry", {
 				d.cost_center = r.message["cost_center"];
 				d.custom_withholding_tax_base = r.message["base"];
 				d.amount = r.message["amount"];
-				frm.doc.paid_amount = frm.doc.paid_amount + d.amount;
+				frm.doc.paid_amount = frm.doc.paid_amount - Math.abs(d.amount);
 				frm.refresh();
 				frappe.show_alert(
 					{

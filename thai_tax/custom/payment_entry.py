@@ -30,6 +30,7 @@ def get_withholding_tax_from_type(filters, doc):
 	base_amount = 0
 	for ref in pay.get("references"):
 		if ref.get("reference_doctype") not in [
+			"Sales Invoice",
 			"Purchase Invoice",
 			"Expense Claim",
 			"Journal Entry",
@@ -58,13 +59,14 @@ def get_withholding_tax_from_type(filters, doc):
 			report_type = frappe.get_cached_value("Account", gl["account"], "report_type")
 			if report_type == "Profit and Loss":
 				base_amount += alloc_percent * (credit - debit)
+	sign = -1 if pay.get("party_type") == "Receive" else 1
 	return {
 		"withholding_tax_type": wht.name,
 		"account": wht.account,
 		"cost_center": company.cost_center,
-		"base": base_amount,
+		"base": base_amount * sign,
 		"rate": wht.percent,
-		"amount": wht.percent / 100 * base_amount,
+		"amount": wht.percent / 100 * base_amount * sign,
 	}
 
 
