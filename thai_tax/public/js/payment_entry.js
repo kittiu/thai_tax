@@ -209,7 +209,7 @@ frappe.ui.form.on("Payment Entry", {
 					d.amount = item["amount"];
 					deduct += d.amount;
 				});
-				frm.doc.paid_amount = frm.doc.paid_amount + deduct;
+				frm.doc.paid_amount = frm.doc.paid_amount - Math.abs(deduct);
 				frm.refresh();
 				frappe.show_alert(
 					{

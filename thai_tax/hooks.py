@@ -70,6 +70,7 @@ fixtures = [
 					"Item-custom_section_break_6buh1",
 					"Item-custom_withholding_tax_type",
 					"Purchase Invoice Item-custom_withholding_tax_type",
+                    "Sales Invoice Item-custom_withholding_tax_type",
 					"Payment Entry Deduction-custom_section_break_s4fwa",
 					"Payment Entry Deduction-custom_column_break_lx8hk",
 					"Payment Entry Deduction-custom_withholding_tax_base",

@@ -1,6 +1,6 @@
 import json
 from ast import literal_eval
-
+from frappe import _
 import frappe
 import pandas as pd
 
@@ -13,7 +13,7 @@ def test_require_withholding_tax(doc):
 	pay = json.loads(doc)
 	for d in pay.get("references"):
 		# Purchase Invoice
-		if d.get("reference_doctype") == "Purchase Invoice":
+		if d.get("reference_doctype") in ["Purchase Invoice", "Sales Invoice"]:
 			ref_doc = frappe.get_doc(d.get("reference_doctype"), d.get("reference_name"))
 			for item in ref_doc.items:
 				if item.custom_withholding_tax_type:
@@ -59,6 +59,8 @@ def get_withholding_tax_from_type(filters, doc):
 			report_type = frappe.get_cached_value("Account", gl["account"], "report_type")
 			if report_type == "Profit and Loss":
 				base_amount += alloc_percent * (credit - debit)
+	if not base_amount:
+		frappe.throw(_("There is nothing to withhold tax for"))
 	sign = -1 if pay.get("party_type") == "Receive" else 1
 	return {
 		"withholding_tax_type": wht.name,
@@ -83,22 +85,22 @@ def get_withholding_tax_from_docs_items(doc):
 	wht_rates = frappe._dict({x[0]: {"percent": x[1], "account": x[2]} for x in wht_types})
 	for ref in pay.get("references"):
 		# Purchase Invoice
-		if ref.get("reference_doctype") == "Purchase Invoice":
+		if ref.get("reference_doctype") in ["Purchase Invoice", "Sales Invoice"]:
 			if not ref.get("allocated_amount") or not ref.get("total_amount"):
 				continue
+			sign = -1 if pay.get("payment_type") == "Pay" else 1
 			ref_doc = frappe.get_doc(ref.get("reference_doctype"), ref.get("reference_name"))
 			for item in ref_doc.items:
 				if item.custom_withholding_tax_type:
 					wht = item.custom_withholding_tax_type
-					print(wht_rates[wht])
 					result.append(
 						{
 							"withholding_tax_type": wht,
 							"account": wht_rates[wht]["account"],
 							"cost_center": company.cost_center,
-							"base": -item.amount,
+							"base": sign * item.amount,
 							"rate": wht_rates[wht]["percent"],
-							"amount": wht_rates[wht]["percent"] / 100 * -item.amount,
+							"amount": wht_rates[wht]["percent"] / 100 * sign * item.amount,
 						}
 					)
 	# Group by and sum
