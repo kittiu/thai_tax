@@ -79,11 +79,17 @@ def create_tax_invoice(doc, doctype, base_amount, tax_amount, voucher):
 		if doctype == "Sales Tax Invoice":
 			party = voucher.customer or party
 			if not party:
-				frappe.throw(_("Customer is required for Sales Tax Invoice"))
+				frappe.throw(_(
+					"<b>Customer is required for Sales Tax Invoice!</b><br/>"
+					"Please edit accounting entry with Tax account and choose <b>Customer</b> under Overwrite Tax invoice section."
+				))
 		if doctype == "Purchase Tax Invoice":
 			party = voucher.supplier or party
 			if not party:
-				frappe.throw(_("Supplier is required for Purchase Tax Invoice"))
+				frappe.throw(_(
+					"<b>Supplier is required for Purchase Tax Invoice!</b><br/>"
+					"Please edit accounting entry with Tax account and choose <b>Supplier</b> under Overwrite Tax invoice section."
+				))
 		je = frappe.get_doc(doc.voucher_type, doc.voucher_no)
 		if je.for_payment:
 			tinv_dict.update(
