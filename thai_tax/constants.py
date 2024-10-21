@@ -345,7 +345,7 @@ HRMS_CUSTOM_FIELDS = {
 		{
 			"fieldname": "tax_invoice",
 			"fieldtype": "Tab Break",
-			"insert_after": "advances",
+			"insert_after": "total_amount_reimbursed",
 			"label": "Tax Invoice",
 		},
 		{
@@ -365,6 +365,7 @@ HRMS_CUSTOM_FIELDS = {
 			"description": "Use this field only when you want to overwrite",
 			"fieldname": "base_amount_overwrite",
 			"fieldtype": "Currency",
+            "insert_after": "column_break_rqacr",
 			"label": "Base Amount Overwrite",
 			"no_copy": 1,
 			"options": "Company:company:default_currency",
