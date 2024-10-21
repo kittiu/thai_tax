@@ -1,18 +1,18 @@
 import click
 import frappe
-from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
-from frappe.custom.doctype.property_setter.property_setter import make_property_setter
-from thai_tax.constants import (
-    HRMS_CUSTOM_FIELDS,
-    ERP_CUSTOM_FIELDS,
-	ERP_PROPERTY_SETTERS
-)
+from frappe.custom.doctype.custom_field.custom_field import \
+    create_custom_fields
+from frappe.custom.doctype.property_setter.property_setter import \
+    make_property_setter
+
+from thai_tax.constants import (ERP_CUSTOM_FIELDS, ERP_PROPERTY_SETTERS,
+                                HRMS_CUSTOM_FIELDS)
 
 
 def after_install():
 	try:
 		print("Setting up Thai Tax...")
-		make_custom_fields()		
+		make_custom_fields()
 		make_property_setters()
 		click.secho("Thank you for installing Thai Tax!", fg="green")
 	except Exception as e:
@@ -48,4 +48,3 @@ def make_property_setters():
 def after_app_install(app_name):
 	if app_name == "hrms":
 		create_custom_fields(HRMS_CUSTOM_FIELDS, ignore_validate=True)
-

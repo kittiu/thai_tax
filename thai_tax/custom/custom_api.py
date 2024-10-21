@@ -79,17 +79,21 @@ def create_tax_invoice(doc, doctype, base_amount, tax_amount, voucher):
 		if doctype == "Sales Tax Invoice":
 			party = voucher.customer or party
 			if not party:
-				frappe.throw(_(
-					"<b>Customer is required for Sales Tax Invoice!</b><br/>"
-					"Please edit accounting entry with Tax account and choose <b>Customer</b> under Overwrite Tax invoice section."
-				))
+				frappe.throw(
+					_(
+						"<b>Customer is required for Sales Tax Invoice!</b><br/>"
+						"Please edit accounting entry with Tax account and choose <b>Customer</b> under Overwrite Tax invoice section."
+					)
+				)
 		if doctype == "Purchase Tax Invoice":
 			party = voucher.supplier or party
 			if not party:
-				frappe.throw(_(
-					"<b>Supplier is required for Purchase Tax Invoice!</b><br/>"
-					"Please edit accounting entry with Tax account and choose <b>Supplier</b> under Overwrite Tax invoice section."
-				))
+				frappe.throw(
+					_(
+						"<b>Supplier is required for Purchase Tax Invoice!</b><br/>"
+						"Please edit accounting entry with Tax account and choose <b>Supplier</b> under Overwrite Tax invoice section."
+					)
+				)
 		je = frappe.get_doc(doc.voucher_type, doc.voucher_no)
 		if je.for_payment:
 			tinv_dict.update(
@@ -194,8 +198,8 @@ def is_tax_invoice_exists(dt, dn):
 	doc = frappe.get_doc(dt, dn)
 	ptax = frappe.get_all(
 		"Purchase Tax Invoice",
-		or_filters={"voucher_no": doc.name,"against_voucher":  doc.name},
-		pluck="name"
+		or_filters={"voucher_no": doc.name, "against_voucher": doc.name},
+		pluck="name",
 	)
 	return True if ptax else False
 
