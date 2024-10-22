@@ -138,6 +138,10 @@ doc_events = {
 	"Payment Entry": {
 		"validate": "thai_tax.custom.custom_api.validate_company_address",
 		"on_update": "thai_tax.custom.custom_api.clear_invoice_undue_tax",
+        "on_submit": "thai_tax.custom.payment_entry.reconcile_undue_tax",
+	},
+    "Unreconcile Payment": {
+        "on_submit": "thai_tax.custom.unreconcile_payment.unreconcile_undue_tax",
 	},
 	"Purchase Invoice": {
 		"after_insert": "thai_tax.custom.custom_api.validate_tax_invoice",
@@ -148,7 +152,8 @@ doc_events = {
 		"on_update": "thai_tax.custom.custom_api.validate_tax_invoice",
 	},
 	"Journal Entry": {
-		"on_update": "thai_tax.custom.custom_api.prepare_journal_entry_tax_invoice_detail"
+		"on_update": "thai_tax.custom.custom_api.prepare_journal_entry_tax_invoice_detail",
+		"on_submit": "thai_tax.custom.journal_entry.reconcile_undue_tax",
 	},
 }
 
