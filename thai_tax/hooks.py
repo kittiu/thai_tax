@@ -6,108 +6,7 @@ app_publisher = "Kitti U."
 app_description = "Thailand Taxation Compliance"
 app_email = "kittiu@gmail.com"
 app_license = "MIT"
-required_apps = ["erpnext", "hrms"]
-
-fixtures = [
-	{
-		"doctype": "Custom Field",
-		"filters": [
-			[
-				"name",
-				"in",
-				(
-					"Payment Entry-column_break_yio5c",
-					"Payment Entry-section_break_owjbn",
-					"Supplier-branch_code",
-					"Customer-branch_code",
-					"Expense Claim-tax_invoice_date",
-					"Expense Claim-supplier_name",
-					"Expense Claim-column_break_6atpw",
-					"Expense Claim-supplier",
-					"Expense Claim-tax_invoice_number",
-					"Expense Claim-section_break_uodhb",
-					"Expense Claim-company_tax_address",
-					"Expense Claim-tax_invoice",
-					"Journal Entry-tax_invoice",
-					"Journal Entry-company_tax_address",
-					"Journal Entry-column_break_3djv9",
-					"Journal Entry-for_payment",
-					"Journal Entry-section_break_pxm0e",
-					"Journal Entry-tax_invoice_details",
-					"Journal Entry Account-overwrite_tax_invoice",
-					"Journal Entry Account-tax_base_amount",
-					"Journal Entry Account-tax_invoice_number",
-					"Journal Entry Account-tax_invoice_date",
-					"Journal Entry Account-column_break_cun7x",
-					"Journal Entry Account-supplier",
-					"Journal Entry Account-customer",
-					"Payment Entry-tax_invoice_date",
-					"Payment Entry-tax_invoice_number",
-					"Payment Entry-company_tax_address",
-					"Payment Entry-tax_invoice",
-					"Payment Entry-deduct_withholding_tax",
-					"Sales Invoice-tax_invoice_number",
-					"Sales Invoice-column_break_cijbv",
-					"Sales Invoice-tax_invoice_date",
-					"Sales Invoice-tax_invoice",
-					"Purchase Invoice-tax_invoice_date",
-					"Purchase Invoice-column_break_t0qgt",
-					"Purchase Invoice-tax_invoice_number",
-					"Purchase Invoice-tax_invoice",
-					"Advance Taxes and Charges-rate-precision",
-					"Purchase Taxes and Charges-rate-precision",
-					"Sales Taxes and Charges-rate-precision",
-					"Expense Claim-column_break_rqacr",
-					"Expense Claim-base_amount_overwrite",
-					"Payment Entry-column_break_bqyze",
-					"Payment Entry-tax_base_amount",
-					"Payment Entry-has_purchase_tax_invoice",
-					"Payment Entry-supplier",
-					"Payment Entry-supplier_name",
-					"Supplier-custom_wht",
-					"Supplier-custom_default_income_tax_form",
-					"Supplier-custom_column_break_7q1md",
-					"Item-custom_section_break_6buh1",
-					"Item-custom_withholding_tax_type",
-					"Purchase Invoice Item-custom_withholding_tax_type",
-                    "Sales Invoice Item-custom_withholding_tax_type",
-					"Payment Entry Deduction-custom_section_break_s4fwa",
-					"Payment Entry Deduction-custom_column_break_lx8hk",
-					"Payment Entry Deduction-custom_withholding_tax_base",
-					"Payment Entry Deduction-custom_withholding_tax_type",
-				),
-			]
-		],
-	},
-	{
-		"doctype": "Property Setter",
-		"filters": [
-			[
-				"name",
-				"in",
-				(
-					"Purchase Invoice-tax_invoice",
-					"Advance Taxes and Charges-rate-precision",
-					"Purchase Taxes and Charges-rate-precision",
-					"Sales Taxes and Charges-rate-precision",
-				),
-			]
-		],
-	},
-	# {
-	# 	"doctype": "Withholding Tax Type",
-	# 	"filters": [
-	# 		[
-	# 			"name",
-	# 			"in",
-	# 			(
-	# 				"Auto",
-	# 			),
-	# 		]
-	# 	],
-	# },
-]
-
+required_apps = ["erpnext"]
 
 # Includes in <head>
 # ------------------
@@ -186,12 +85,14 @@ jinja = {
 
 # before_install = "thai_tax.install.before_install"
 after_install = "thai_tax.install.after_install"
+after_app_install = "thai_tax.install.after_app_install"
 
 # Uninstallation
 # ------------
 
 # before_uninstall = "thai_tax.uninstall.before_uninstall"
 # after_uninstall = "thai_tax.uninstall.after_uninstall"
+before_app_uninstall = "thai_tax.uninstall.before_app_uninstall"
 
 # Desk Notifications
 # ------------------
@@ -237,6 +138,10 @@ doc_events = {
 	"Payment Entry": {
 		"validate": "thai_tax.custom.custom_api.validate_company_address",
 		"on_update": "thai_tax.custom.custom_api.clear_invoice_undue_tax",
+        "on_submit": "thai_tax.custom.payment_entry.reconcile_undue_tax",
+	},
+    "Unreconcile Payment": {
+        "on_submit": "thai_tax.custom.unreconcile_payment.unreconcile_undue_tax",
 	},
 	"Purchase Invoice": {
 		"after_insert": "thai_tax.custom.custom_api.validate_tax_invoice",
@@ -247,7 +152,8 @@ doc_events = {
 		"on_update": "thai_tax.custom.custom_api.validate_tax_invoice",
 	},
 	"Journal Entry": {
-		"on_update": "thai_tax.custom.custom_api.prepare_journal_entry_tax_invoice_detail"
+		"on_update": "thai_tax.custom.custom_api.prepare_journal_entry_tax_invoice_detail",
+		"on_submit": "thai_tax.custom.journal_entry.reconcile_undue_tax",
 	},
 }
 

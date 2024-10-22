@@ -1,8 +1,9 @@
 import json
 from ast import literal_eval
-from frappe import _
+
 import frappe
 import pandas as pd
+from frappe import _
 
 REF_DOCTYPES = ["Purchase Invoice", "Expense Claim", "Journal Entry"]
 
@@ -144,3 +145,27 @@ def make_withholding_tax_cert(filters, doc):
 			},
 		)
 	return cert
+
+
+def reconcile_undue_tax(doc, method):
+	""" If bs_reconcile is installed, unreconcile undue tax gls """
+	vouchers = [doc.name] + [r.reference_name for r in doc.references]
+	reconcile_undue_tax_gls(vouchers)
+
+
+def reconcile_undue_tax_gls(vouchers, unreconcile=False):
+	""" Only if bs_reconcile app is install, reconcile/unreconcile undue tax gl entries """
+	if "bs_reconcile" not in frappe.get_installed_apps():
+		return 
+	try:
+		from bs_reconcile.balance_sheet_reconciliation import utils
+	except ImportError:
+		pass
+	tax = frappe.get_single("Tax Invoice Settings")
+	undue_taxes = [tax.purchase_tax_account_undue, tax.sales_tax_account_undue]
+	gl_entries = utils.get_gl_entries_by_vouchers(vouchers)
+	undue_tax_gls = list(filter(lambda x: x.account in undue_taxes, gl_entries))
+	if unreconcile:
+		utils.unreconcile_gl(undue_tax_gls)
+	else:
+		utils.reconcile_gl(undue_tax_gls)
