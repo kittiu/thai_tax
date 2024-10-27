@@ -79,17 +79,21 @@ def create_tax_invoice(doc, doctype, base_amount, tax_amount, voucher):
 		if doctype == "Sales Tax Invoice":
 			party = voucher.customer or party
 			if not party:
-				frappe.throw(_(
-					"<b>Customer is required for Sales Tax Invoice!</b><br/>"
-					"Please edit accounting entry with Tax account and choose <b>Customer</b> under Overwrite Tax invoice section."
-				))
+				frappe.throw(
+					_(
+						"<b>Customer is required for Sales Tax Invoice!</b><br/>"
+						"Please edit accounting entry with Tax account and choose <b>Customer</b> under Overwrite Tax invoice section."
+					)
+				)
 		if doctype == "Purchase Tax Invoice":
 			party = voucher.supplier or party
 			if not party:
-				frappe.throw(_(
-					"<b>Supplier is required for Purchase Tax Invoice!</b><br/>"
-					"Please edit accounting entry with Tax account and choose <b>Supplier</b> under Overwrite Tax invoice section."
-				))
+				frappe.throw(
+					_(
+						"<b>Supplier is required for Purchase Tax Invoice!</b><br/>"
+						"Please edit accounting entry with Tax account and choose <b>Supplier</b> under Overwrite Tax invoice section."
+					)
+				)
 		je = frappe.get_doc(doc.voucher_type, doc.voucher_no)
 		if je.for_payment:
 			tinv_dict.update(
@@ -194,8 +198,8 @@ def is_tax_invoice_exists(dt, dn):
 	doc = frappe.get_doc(dt, dn)
 	ptax = frappe.get_all(
 		"Purchase Tax Invoice",
-		or_filters={"voucher_no": doc.name,"against_voucher":  doc.name},
-		pluck="name"
+		or_filters={"voucher_no": doc.name, "against_voucher": doc.name},
+		pluck="name",
 	)
 	return True if ptax else False
 
@@ -354,24 +358,26 @@ def get_undue_tax(doc, ref, gl, tax):
 	# Find Tax
 	if gl["account"] == tax_account_undue:
 		undue_tax = alloc_percent * (credit - debit)
-		undue_remain = get_uncleared_tax_amount(gl, doc.payment_type)
-		if not undue_remain:
-			undue_tax = 0
-		else:
-			undue_tax = undue_tax if undue_tax < undue_remain else undue_remain
+		# kittiu: For now, as residual from bs_reconcile is not stable, do not use.
+		# undue_remain = get_uncleared_tax_amount(gl, doc.payment_type)
+		# if not undue_remain:
+		# 	undue_tax = 0
+		# else:
+		# 	undue_tax = undue_tax if undue_tax < undue_remain else undue_remain
+		# --
 	return (undue_tax, base_amount, tax_account_undue, tax_account)
 
-
-def get_uncleared_tax_amount(gl, payment_type):
-	# If module bs_reconcile is installed, uncleared_tax = residual amount
-	# else uncleared_tax is the debit - credit amount
-	uncleared_tax = gl.debit - gl.credit
-	if gl.get("is_reconcile"):
-		uncleared_tax = gl.get("residual")
-	if payment_type == "Receive":
-		uncleared_tax = -uncleared_tax
-	return uncleared_tax
-
+# kittiu: For now, as residual from bs_reconcile is not stable, do not use.
+# def get_uncleared_tax_amount(gl, payment_type):
+# 	# If module bs_reconcile is installed, uncleared_tax = residual amount
+# 	# else uncleared_tax is the debit - credit amount
+# 	uncleared_tax = gl.debit - gl.credit
+# 	if gl.get("is_reconcile"):
+# 		uncleared_tax = gl.get("residual")
+# 	if payment_type == "Receive":
+# 		uncleared_tax = -uncleared_tax
+# 	return uncleared_tax
+# --
 
 def is_tax_reset(doc, tax_accounts):
 	# For new doc, or has tax changes, do the reset
