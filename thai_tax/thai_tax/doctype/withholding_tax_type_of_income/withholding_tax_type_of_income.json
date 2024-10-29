@@ -1,0 +1,38 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "autoname": "prompt",
+ "creation": "2024-10-27 22:48:15.359529",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "description"
+ ],
+ "fields": [
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Description"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-10-28 15:24:18.416707",
+ "modified_by": "Administrator",
+ "module": "Thai Tax",
+ "name": "Withholding Tax Type Of Income",
+ "naming_rule": "Set by user",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "read": 1,
+   "role": "All"
+  }
+ ],
+ "sort_field": "name",
+ "sort_order": "ASC",
+ "states": [],
+ "title_field": "description"
+}

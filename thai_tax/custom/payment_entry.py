@@ -85,23 +85,24 @@ def get_withholding_tax_from_docs_items(doc):
 	)
 	wht_rates = frappe._dict({x[0]: {"percent": x[1], "account": x[2]} for x in wht_types})
 	for ref in pay.get("references"):
-		# Purchase Invoice
-		if ref.get("reference_doctype") in ["Purchase Invoice", "Sales Invoice"]:
+		# For Purchase Invoice, Sales Invoice
+		ref_doctype = ref.get("reference_doctype")
+		if ref_doctype in ["Purchase Invoice", "Sales Invoice"]:
 			if not ref.get("allocated_amount") or not ref.get("total_amount"):
 				continue
 			sign = -1 if pay.get("payment_type") == "Pay" else 1
-			ref_doc = frappe.get_doc(ref.get("reference_doctype"), ref.get("reference_name"))
+			ref_doc = frappe.get_doc(ref_doctype, ref.get("reference_name"))
 			for item in ref_doc.items:
-				if item.custom_withholding_tax_type:
-					wht = item.custom_withholding_tax_type
+				wht_type = get_wht_type(ref_doctype, pay, item)
+				if wht_type:
 					result.append(
 						{
-							"withholding_tax_type": wht,
-							"account": wht_rates[wht]["account"],
+							"withholding_tax_type": wht_type,
+							"account": wht_rates[wht_type]["account"],
 							"cost_center": company.cost_center,
 							"base": sign * item.amount,
-							"rate": wht_rates[wht]["percent"],
-							"amount": wht_rates[wht]["percent"] / 100 * sign * item.amount,
+							"rate": wht_rates[wht_type]["percent"],
+							"amount": wht_rates[wht_type]["percent"] / 100 * sign * item.amount,
 						}
 					)
 	# Group by and sum
@@ -112,6 +113,20 @@ def get_withholding_tax_from_docs_items(doc):
 	result = df.groupby(group_fields, as_index=False).aggregate(dict_sum_fields)
 	result = result.to_dict(orient="records")
 	return result
+
+
+def get_wht_type(ref_doctype, pay, item):
+	item = frappe.get_doc("Item", item)
+	wht_type = None
+	if ref_doctype == "Purchase Invoice":
+		supplier = frappe.get_cached_doc("Supplier", pay.get("party"))
+		if supplier.supplier_type == "Individual":
+			wht_type = item.withholding_tax_type_pay_individual
+		else:
+			wht_type = item.withholding_tax_type_pay_supplier
+	if ref_doctype == "Sales Invoice":
+		wht_type = item.custom_withholding_tax_type	
+	return wht_type
 
 
 @frappe.whitelist()
