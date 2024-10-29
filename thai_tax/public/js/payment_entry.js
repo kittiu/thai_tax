@@ -66,13 +66,18 @@ frappe.ui.form.on("Payment Entry", {
 		frm.add_custom_button(__("Create Withholding Tax Cert"), async function () {
 			let income_tax_form = "";
 			if (frm.doc.party_type == "Supplier") {
-				income_tax_form = (
+				supplier_type = (
 					await frappe.db.get_value(
 						frm.doc.party_type,
 						frm.doc.party,
-						"custom_default_income_tax_form"
+						"supplier_type"
 					)
-				).message.custom_default_income_tax_form;
+				).message.supplier_type;
+				if (supplier_type == "Individual") {
+					income_tax_form = "PND3";
+				} else {
+					income_tax_form = "PND53";
+				}
 			}
 			const fields = [
 				{
@@ -133,13 +138,22 @@ frappe.ui.form.on("Payment Entry", {
 	},
 
 	manual_deduct_withholding_tax: function (frm) {
-		const fields = [
+		const fields = [ 
 			{
 				fieldtype: "Link",
 				label: __("WHT Type"),
 				fieldname: "wht_type",
 				options: "Withholding Tax Type",
 				reqd: 1,
+				get_query: function () {
+					return {
+						filters: [[
+							"Withholding Tax Type",
+							"for_payment_type",
+							"in",
+							[frm.doc.payment_type, "Pay and Receive"]]],
+					};
+				},
 			},
 		];
 		frappe.prompt(
