@@ -26,34 +26,79 @@ def full_thai_date(date_str):
 
 @frappe.whitelist()
 def get_address_by_tax_id(tax_id=False, branch=False):
+	"""Get address information from Revenue Department Web Service by Tax ID and Branch number.
+
+	Args:
+		tax_id (str): Tax ID of the company
+		branch (str): Branch number of the company
+
+	Returns:
+		dict: Dictionary containing address information
+			  Empty dict if there's an error
+
+	Raises:
+		frappe.ValidationError: If tax_id or branch is not provided
+	"""
 	if not (tax_id and branch):
-		frappe.throw(_("Please provide Tax ID and Branch"))
-	session = Session()
+		frappe.throw(_('Please provide both Tax ID and Branch number'))
+
+	# API Configuration
+	url = "https://rdws.rd.go.th/serviceRD3/vatserviceRD3.asmx"
+	querystring = {"wsdl": ""}
+	headers = {"content-type": "application/soap+xml; charset=utf-8"}
+
+	# Convert branch number, default to "0" if not numeric
+	branch_number = int(branch if branch.isnumeric() else "0")
+
+	# Prepare SOAP payload
+	payload = (
+		'<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" '
+		'xmlns:vat="https://rdws.rd.go.th/serviceRD3/vatserviceRD3">'
+		'<soap:Header/>'
+		'<soap:Body>'
+		'<vat:Service>'
+		'<vat:username>anonymous</vat:username>'
+		'<vat:password>anonymous</vat:password>'
+		f'<vat:TIN>{tax_id}</vat:TIN>'
+		'<vat:Name></vat:Name>'
+		'<vat:ProvinceCode>0</vat:ProvinceCode>'
+		f'<vat:BranchNumber>{branch_number}</vat:BranchNumber>'
+		'<vat:AmphurCode>0</vat:AmphurCode>'
+		'</vat:Service>'
+		'</soap:Body>'
+		'</soap:Envelope>'
+	)
+
+	# Setup session with SSL verification disabled
+	session = requests.Session()
 	session.verify = False
-	transport = Transport(session=session)
-	client = Client(
-		"https://rdws.rd.go.th/serviceRD3/vatserviceRD3.asmx?wsdl", transport=transport
-	)
-	result = client.service.Service(
-		username="anonymous",
-		password="anonymous",
-		TIN=tax_id,
-		ProvinceCode=0,
-		BranchNumber=int(branch.isnumeric() and branch or "0"),
-		AmphurCode=0,
-	)
-	result = zeep.helpers.serialize_object(result)
+
+	# Make the API request
+	response = session.post(url, data=payload, headers=headers, params=querystring)
+	response.raise_for_status()  # Raise exception for HTTP errors
+
+	# Parse XML response
+	result = etree.fromstring(response.content)
+	# Process response data
 	data = {}
-	for k in result.keys():
-		if k == "vmsgerr" and result[k] is not None:
-			frappe.throw(result[k].get("anyType", None)[0])
-		if result[k] is not None:
-			v = result[k].get("anyType", None)[0]
-			data.update({k: v})
+	value = False
+	for element in result.iter():
+		tag = etree.QName(element).localname
+		if not value and tag[:1] == "v":
+			value = tag
+			continue
+		if value and tag == "anyType":
+			data[value] = element.text.strip()
+		value = False
+
+	if data.get("vmsgerr"):
+		frappe.throw(data.get("vmsgerr"))
+  
 	return finalize_address_dict(data)
 
 
 def finalize_address_dict(data):
+
 	def get_part(data, key, value):
 		return data.get(key, "-") != "-" and value % (map[key], data.get(key)) or ""
 
@@ -70,9 +115,9 @@ def finalize_address_dict(data):
 		"vAmphur": "อ.",
 		"vProvince": "จ.",
 	}
-	name = "{} {}".format(data.get("vtitleName"), data.get("vName"))
-	if data.get("vSurname", "-") != "-":
-		name = "{} {}".format(name, data["vSurname"])
+	name = f"{data.get('vBranchTitleName')} {data.get('vBranchName')}"
+	if "vSurname" in data and data["vSurname"] not in ("-", "", None):
+		name = f"{name} {data['vSurname']}"
 	house = data.get("vHouseNumber", "")
 	village = get_part(data, "vVillageName", "%s %s")
 	soi = get_part(data, "vSoiName", "%s %s")
@@ -87,9 +132,9 @@ def finalize_address_dict(data):
 	postal = data.get("vPostCode", "")
 
 	if province == "จ.กรุงเทพมหานคร":
-		thambon = data.get("vThambol") and "แขวง%s" % data["vThambol"] or ""
-		amphur = data.get("vAmphur") and "เขต%s" % data["vAmphur"] or ""
-		province = data.get("vProvince") and "%s" % data["vProvince"] or ""
+		thambon = data.get("vThambol") and f"แขวง{data['vThambol']}" or ""
+		amphur = data.get("vAmphur") and f"เขต{data['vAmphur']}" or ""
+		province = data.get("vProvince") and f"{data['vProvince']}" or ""
 
 	address_parts = filter(
 		lambda x: x != "", [house, village, soi, moo, building, floor, room, street]
@@ -102,3 +147,4 @@ def finalize_address_dict(data):
 		"state": province,
 		"pincode": postal,
 	}
+
