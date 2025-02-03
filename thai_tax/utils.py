@@ -1,13 +1,10 @@
 import datetime
 
 import frappe
-import zeep
 from frappe import _
 from num2words import num2words
-from requests import Session
-from zeep import Client
-from zeep.transports import Transport
-
+import requests
+from lxml import etree
 
 def amount_in_bahttext(amount):
 	return num2words(amount, to="currency", lang="th")
