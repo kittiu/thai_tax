@@ -32,7 +32,7 @@ def create_tax_invoice_on_gl_tax(doc, method):
 	if doctype:
 		if voucher.docstatus == 2:
 			tax_amount = 0
-		if tax_amount != 0 and voucher.doctype in ["Expense Claim", "Purchase Invoice", "Sales Invoice", "Payment Entry", "Journal Entry"]::
+		if tax_amount != 0 and voucher.doctype in ["Expense Claim", "Purchase Invoice", "Sales Invoice", "Payment Entry", "Journal Entry"]:
 			# Base amount, use base amount from origin document
 			if voucher.doctype == "Expense Claim":
 				base_amount = voucher.base_amount_overwrite or voucher.total_sanctioned_amount
