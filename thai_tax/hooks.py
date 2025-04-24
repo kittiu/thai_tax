@@ -8,6 +8,21 @@ app_email = "kittiu@gmail.com"
 app_license = "MIT"
 required_apps = ["erpnext"]
 
+fixtures = [
+    {
+		"doctype": "Property Setter",
+		"filters": [
+			[
+				"name",
+				"in",
+				(
+					"Currency Exchange Settings-service_provider-options",
+				),
+			]
+		],
+	},
+]
+
 # Includes in <head>
 # ------------------
 
@@ -40,6 +55,7 @@ doctype_js = {
 	"Sales Tax Invoice": "public/js/sales_tax_invoice.js",
 	"Withholding Tax Cert": "public/js/withholding_tax_cert.js",
 	"Address": "public/js/address.js",
+    "Currency Exchange Settings": "public/js/currency_exchange_settings.js",
 }
 
 
