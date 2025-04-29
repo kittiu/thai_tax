@@ -38,7 +38,6 @@ doctype_js = {
 	"Expense Claim": "public/js/expense_claim.js",
 	"Purchase Tax Invoice": "public/js/purchase_tax_invoice.js",
 	"Sales Tax Invoice": "public/js/sales_tax_invoice.js",
-	"Withholding Tax Cert": "public/js/withholding_tax_cert.js",
 	"Address": "public/js/address.js",
 }
 
