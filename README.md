@@ -1,3 +1,5 @@
+# !IMPORTANT! This repo is not longer improved (only bug fix), we moved to https://github.com/ecosoft-odoo/erpnext_thailand
+
 ## Thai Tax
 
 Additional tax functionality to comply with Thailand Tax regulation.
