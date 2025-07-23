@@ -1,4 +1,4 @@
-# !IMPORTANT! This repo is not longer improved (only bug fix), we moved to https://github.com/ecosoft-odoo/erpnext_thailand
+# !IMPORTANT! This repo is not longer improved (only bug fix), we moved to https://github.com/ecosoft-frappe/erpnext_thailand
 
 ## Thai Tax
 
