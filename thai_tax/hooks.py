@@ -252,3 +252,5 @@ override_doctype_dashboards = {
 # auth_hooks = [
 #     "thai_tax.auth.validate"
 # ]
+
+on_gle_rename = "thai_tax.custom.gl_entry.rename_gl_entry_in_tax_invoice"
